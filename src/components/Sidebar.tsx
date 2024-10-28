@@ -33,7 +33,7 @@ function Sidebar() {
                     <VStack align="stretch">
                         <Button
                             as={Link}
-                            to="/artist"
+                            to="/task"
                             variant={location.pathname === "/task" ? "solid" : "ghost"}
                             justifyContent="flex-start"
                             onClick={onClose}
@@ -42,7 +42,7 @@ function Sidebar() {
                         </Button>
                         <Button
                             as={Link}
-                            to="/url"
+                            to="/report"
                             variant={location.pathname === "/report" ? "solid" : "ghost"}
                             justifyContent="flex-start"
                             onClick={onClose}
@@ -51,7 +51,7 @@ function Sidebar() {
                         </Button>
                         <Button
                             as={Link}
-                            to="/url"
+                            to="/reward"
                             variant={location.pathname === "/reward" ? "solid" : "ghost"}
                             justifyContent="flex-start"
                             onClick={onClose}

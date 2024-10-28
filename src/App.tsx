@@ -1,15 +1,23 @@
-import { BrowserRouter as Router } from 'react-router-dom'
-import { Box, Button } from "@yamada-ui/react"
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { Box } from "@yamada-ui/react"
 import Sidebar from './components/Sidebar'
 import './App.css'
+import Task from './pages/Task'
+import Reward from './pages/Reward'
+import Report from './pages/Report'
+
 
 function App() {
   return (
     <Router>
       <Box>
         <Sidebar />
-        <Button>あいうおえ</Button>
       </Box>
+      <Routes>
+        <Route path="/task" element={<Task />} />
+        <Route path="/reward" element={<Reward />} />
+        <Route path="/report" element={<Report />} />
+      </Routes>
     </Router>
   )
 }
