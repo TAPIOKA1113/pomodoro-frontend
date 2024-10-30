@@ -79,7 +79,7 @@ function PomodoloList({ children, onPointsUpdate }: PomodoloListProps) {
             <div className="flex flex-col">
                 <div className="flex justify-between items-center pb-3">
                     <div className="flex-1" />
-                    <h2 className="text-xl font-semibold mb-4 text-indigo-800">{children}</h2>
+                    <h2 className="text-xl font-semibold text-indigo-800">{children}</h2>
                     <div className="flex-1 flex justify-end">
                         <Button onClick={() => setIsOpen(true)}>設定</Button>
                     </div>

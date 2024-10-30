@@ -38,7 +38,7 @@ function HabitList({ children, onPointsUpdate }: HabitListProps) {
             <div className="flex flex-col">
                 <div className="flex justify-between items-center pb-3">
                     <div className="flex-1" />
-                    <h2 className="text-xl font-semibold mb-4 text-indigo-800">{children}</h2>
+                    <h2 className="text-xl font-semibold text-indigo-800">{children}</h2>
                     <div className="flex-1 flex justify-end">
                         <Button onClick={() => setIsOpen(true)}>設定</Button>
                     </div>
@@ -46,12 +46,25 @@ function HabitList({ children, onPointsUpdate }: HabitListProps) {
                 <div className={`bg-white shadow-md rounded-lg w-[500px] h-80 p-6`}>
                     <VStack align="stretch">
                         {habits.map((habit, index) => (
-                            <HStack key={index} justify="space-between">
+                            <HStack key={index} justify="space-between" p="2" _hover={{ bg: "gray.50" }} rounded="md">
                                 <Checkbox
                                     isChecked={habit.isCompleted}
                                     onChange={() => handleHabitComplete(habit.title)}
+                                    colorScheme="primary"
+                                    size="lg"
+                                    _checked={{
+                                        "& span svg": {
+                                            color: "white",
+                                            transform: "scale(1)",
+                                            opacity: 1
+                                        }
+                                    }}
                                 >
-                                    <Text>{habit.title}</Text>
+                                    <Text fontSize="md" ml="2" fontWeight={habit.isCompleted ? "medium" : "normal"}
+                                        color={habit.isCompleted ? "gray.500" : "gray.800"}
+                                        textDecoration={habit.isCompleted ? "line-through" : "none"}>
+                                        {habit.title}
+                                    </Text>
                                 </Checkbox>
                                 <Text fontSize="sm" color="gray.500">
                                     {habit.points} Pt
