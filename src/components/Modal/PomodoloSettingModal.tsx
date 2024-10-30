@@ -19,24 +19,24 @@ import { FiX } from 'react-icons/fi'
 
 interface Habit {
     title: string;
-    points: number;
+    setCount: number;
 }
 
 interface HabitSettingModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (habits: Habit[]) => void;
-    initialHabits: Habit[];
+    onSave: any;
+    initialHabits: any;
 }
 
-export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabits }: HabitSettingModalProps) {
+export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialHabits }: HabitSettingModalProps) {
 
-    const [habits, setHabits] = useState<Habit[]>([{ title: '', points: 1 }]);
+    const [habits, setHabits] = useState<Habit[]>([{ title: '', setCount: 1 }]);
 
 
     useEffect(() => {
         if (isOpen) {
-            setHabits([...initialHabits, { title: '', points: 1 }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
+            setHabits([...initialHabits, { title: '', setCount: 1 }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
         }
     }, [isOpen, initialHabits]);
 
@@ -53,14 +53,14 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
 
     const handlePointsChange = (index: number, value: number) => {
         const newHabits = [...habits];
-        newHabits[index] = { ...newHabits[index], points: value };
+        newHabits[index] = { ...newHabits[index], setCount: value };
         setHabits(newHabits);
     };
 
     const addNewField = (index: number) => {
         const currentValue = habits[index].title;
         if (currentValue !== '' && index === habits.length - 1) {
-            setHabits([...habits, { title: '', points: 1 }]);
+            setHabits([...habits, { title: '', setCount: 1 }]);
         }
     };
 
@@ -71,7 +71,7 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
 
     const handleDelete = (index: number) => {
         if (habits.length === 1) {
-            setHabits([{ title: '', points: 1 }]);
+            setHabits([{ title: '', setCount: 1 }]);
             return;
         }
         const newHabits = habits.filter((_, i) => i !== index);
@@ -81,15 +81,15 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
     return (
         <Modal isOpen={isOpen} onClose={onClose} size='3xl'>
             <ModalOverlay />
-            <ModalHeader>日々の習慣を設定</ModalHeader>
+            <ModalHeader>ポモドーロの設定</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
                 <VStack align="stretch">
                     {habits[0].title.trim() !== '' && (
 
                         <Flex justify="end" fontSize="md" color="gray.500">
-                            <Text px="15">
-                                ポイント数
+                            <Text px="16">
+                                セット数
                             </Text>
                         </Flex>
 
@@ -101,16 +101,16 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
                                 value={habit.title}
                                 onChange={(e) => handleInputChange(index, e.target.value)}
                                 onBlur={() => handleBlur(index)}
-                                placeholder="新しい習慣を入力"
+                                placeholder="新しいポモドーロの追加"
                                 flex={1}
                             />
                             {habit.title.trim() !== '' && (
                                 <>
 
                                     <NumberInput
-                                        value={habit.points}
+                                        value={habit.setCount}
                                         onChange={(_, value) => handlePointsChange(index, value)}
-                                        min={0}
+                                        min={1}
                                         max={10}
                                         w="100px"
                                         size="md"
