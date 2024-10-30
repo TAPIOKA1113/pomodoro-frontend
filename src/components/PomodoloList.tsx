@@ -67,7 +67,7 @@ function PomodoloList({ children, className, onPointsUpdate }: PomodoloListProps
     };
 
     const handleSavePomodolo = (newPomodolos: Pomodolo[]) => {
-        // 既存のポモドーロのremainingsSetsを維持しつつ、新しいポモドーロは初期化
+        // ポモドーロ初期化
         setPomodolos(newPomodolos);
         setIsOpen(false);
     };
