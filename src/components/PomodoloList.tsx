@@ -111,6 +111,19 @@ function PomodoloList({ children, className, onPointsUpdate }: PomodoloListProps
                                 ポモドーロを設定してください
                             </Text>
                         )}
+                        {pomodolos.length >= 1 && (
+                            <Text color="gray.500" textAlign="center">
+                                所要時間：
+                                {(() => {
+                                    const totalMinutes = pomodolos.reduce((total, pomodolo) => total + pomodolo.setNumber * 30, 0);
+                                    const hours = Math.floor(totalMinutes / 60);
+                                    const minutes = totalMinutes % 60;
+                                    return hours > 0
+                                        ? `${hours}時間${minutes > 0 ? ` ${minutes}分` : ''}`
+                                        : `${minutes}分`;
+                                })()}
+                            </Text>
+                        )}
                     </VStack>
                 </div>
             </div>
