@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Modal,
     ModalBody,
@@ -24,11 +24,18 @@ interface HabitSettingModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSave: (habits: Habit[]) => void;
+    initialHabits: Habit[];
 }
 
-export default function HabitSettingModal({ isOpen, onClose, onSave }: HabitSettingModalProps) {
+export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabits }: HabitSettingModalProps) {
 
     const [habits, setHabits] = useState<Habit[]>([{ title: '', points: 1 }]);
+
+    useEffect(() => {
+        if (isOpen) {
+            setHabits([...initialHabits, { title: '', points: 1 }]);
+        }
+    }, [isOpen, initialHabits]);
 
     const handleInputChange = (index: number, value: string) => {
         const newHabits = [...habits];

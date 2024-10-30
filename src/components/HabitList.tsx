@@ -65,6 +65,7 @@ function HabitList({ children, className }: HabitListProps) {
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
                 onSave={handleSaveHabits}
+                initialHabits={habits}
             />
         </>
     );
