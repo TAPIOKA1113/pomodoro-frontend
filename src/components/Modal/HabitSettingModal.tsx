@@ -16,11 +16,8 @@ import {
     Flex
 } from '@yamada-ui/react'
 import { FiX } from 'react-icons/fi'
+import { Habit } from '../../type/habit';
 
-interface Habit {
-    title: string;
-    points: number;
-}
 
 interface HabitSettingModalProps {
     isOpen: boolean;
@@ -31,12 +28,12 @@ interface HabitSettingModalProps {
 
 export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabits }: HabitSettingModalProps) {
 
-    const [habits, setHabits] = useState<Habit[]>([{ title: '', points: 1 }]);
+    const [habits, setHabits] = useState<Habit[]>([{ title: '', points: 1, isCompleted: false }]);
 
 
     useEffect(() => {
         if (isOpen) {
-            setHabits([...initialHabits, { title: '', points: 1 }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
+            setHabits([...initialHabits, { title: '', points: 1, isCompleted: false }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
         }
     }, [isOpen, initialHabits]);
 
@@ -60,7 +57,7 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
     const addNewField = (index: number) => {
         const currentValue = habits[index].title;
         if (currentValue !== '' && index === habits.length - 1) {
-            setHabits([...habits, { title: '', points: 1 }]);
+            setHabits([...habits, { title: '', points: 1, isCompleted: false }]);
         }
     };
 
@@ -71,7 +68,7 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
 
     const handleDelete = (index: number) => {
         if (habits.length === 1) {
-            setHabits([{ title: '', points: 1 }]);
+            setHabits([{ title: '', points: 1, isCompleted: false }]);
             return;
         }
         const newHabits = habits.filter((_, i) => i !== index);

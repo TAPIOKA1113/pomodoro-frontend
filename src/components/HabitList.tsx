@@ -1,11 +1,8 @@
 import React, { useState } from 'react'
 import { Button, Checkbox, VStack, Text, HStack } from '@yamada-ui/react'
 import HabitSettingModal from './Modal/HabitSettingModal'
-
-interface Habit {
-    title: string;
-    points: number;
-}
+import useLocalStorage from '../hooks/useLocalStorage';
+import { Habit } from '../type/habit';
 
 interface HabitListProps {
     children: React.ReactNode;
@@ -15,26 +12,24 @@ interface HabitListProps {
 
 function HabitList({ children, className, onPointsUpdate }: HabitListProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [habits, setHabits] = useState<Habit[]>([]);
-    const [completedHabits, setCompletedHabits] = useState<string[]>([]);
+    const [habits, setHabits] = useLocalStorage<Habit[]>("habits", []);
+
 
     const handleHabitComplete = (title: string) => {
-
-        const habit = habits.find(h => h.title === title);
-        if (!habit) return;
-
-        if (completedHabits.includes(title)) {
-            setCompletedHabits(completedHabits.filter(h => h !== title));
-            onPointsUpdate?.(-(habit.points));
-        } else {
-            setCompletedHabits([...completedHabits, title]);
-            onPointsUpdate?.(habit.points);
-        }
+        setHabits(prev => prev.map(habit => {
+            if (habit.title === title) {
+                // ポイントの更新
+                onPointsUpdate?.(habit.isCompleted ? -habit.points : habit.points);
+                // 完了状態を反転
+                return { ...habit, isCompleted: !habit.isCompleted };
+            }
+            return habit;
+        }));
     };
+
 
     const handleSaveHabits = (newHabits: Habit[]) => {
         setHabits(newHabits);
-        setCompletedHabits([]);
         setIsOpen(false);
     };
 
@@ -50,7 +45,7 @@ function HabitList({ children, className, onPointsUpdate }: HabitListProps) {
                         {habits.map((habit, index) => (
                             <HStack key={index} justify="space-between">
                                 <Checkbox
-                                    isChecked={completedHabits.includes(habit.title)}
+                                    isChecked={habit.isCompleted}
                                     onChange={() => handleHabitComplete(habit.title)}
                                 >
                                     <Text>{habit.title}</Text>

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import PomodoloSettingModal from './Modal/PomodoloSettingModal';
 import { Button, VStack, Text, HStack, IconButton } from '@yamada-ui/react'
 import { FiMinus } from 'react-icons/fi';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 interface Pomodolo {
     title: string;
@@ -17,7 +18,7 @@ interface PomodoloListProps {
 
 function PomodoloList({ children, className, onPointsUpdate }: PomodoloListProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [pomodolos, setPomodolos] = useState<Pomodolo[]>([]);
+    const [pomodolos, setPomodolos] = useLocalStorage<Pomodolo[]>("pomodolos", []);
 
     const handleSetComplete = (title: string) => {
         setPomodolos(prev => prev.map(pomodolo => {

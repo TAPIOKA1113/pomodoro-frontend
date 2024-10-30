@@ -3,11 +3,12 @@ import Todo from '../components/TodoList';
 import PomodoloList from '../components/PomodoloList';
 import HabitList from '../components/HabitList';
 import { Star } from 'lucide-react'
+import useLocalStorage from '../hooks/useLocalStorage';
 
 
 function Task() {
 
-    const [totalPoints, setTotalPoints] = useState(0);
+    const [totalPoints, setTotalPoints] = useLocalStorage<number>("totalPoints", 0);
 
     const handlePointsUpdate = (points: number) => {
         setTotalPoints(prev => prev + points);
