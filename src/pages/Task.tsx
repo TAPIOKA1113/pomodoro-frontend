@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Todo from '../components/TodoList';
 import PomodoloList from '../components/PomodoloList';
 import HabitList from '../components/HabitList';
@@ -11,7 +10,7 @@ function Task() {
     const [totalPoints, setTotalPoints] = useLocalStorage<number>("totalPoints", 0);
 
     const handlePointsUpdate = (points: number) => {
-        setTotalPoints(prev => prev + points);
+        setTotalPoints(prev => Math.max(0, prev + points));
     };
 
     return (

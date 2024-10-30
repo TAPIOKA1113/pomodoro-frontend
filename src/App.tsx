@@ -9,7 +9,7 @@ import Report from './pages/Report'
 
 function App() {
   return (
-    <Router>
+    <Router basename="/pomodoro-frontend">
       <Box>
         <Sidebar />
       </Box>

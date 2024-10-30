@@ -18,7 +18,7 @@ export default function Component() {
     // 初回レンダリング時に保有ポイント、報酬を読み込む
     useEffect(() => {
         const storedPoints = localStorage.getItem('totalPoints')
-        if (storedPoints) setTotalPoints(parseInt(storedPoints))
+        if (storedPoints) setTotalPoints(parseFloat(storedPoints))
 
         const storedRewards = localStorage.getItem('rewards')
         if (storedRewards) setRewards(JSON.parse(storedRewards))
@@ -64,13 +64,13 @@ export default function Component() {
                         </Button>
                     </HStack>
                     <Grid gap={6}>
-                        {rewards.map((reward) => (
+                        {rewards.sort((a, b) => (a.points || 0) - (b.points || 0)).map((reward) => (
                             <Card key={reward.id} p={6} shadow="md" _hover={{ shadow: "lg" }} transition="box-shadow 0.3s" bg="white/60" backdropFilter="blur(8px)">
                                 <VStack align="stretch" >
                                     <Heading size="md" color="indigo.600">{reward.name}</Heading>
                                     <Text color="gray.600">{reward.points} ポイント</Text>
                                     <HStack justify="space-between">
-                                        <Button colorScheme="green" onClick={() => handleRedeemReward(reward)} leftIcon={<Gift />}>
+                                        <Button disabled={reward.points ? totalPoints < reward.points : false} colorScheme="green" onClick={() => handleRedeemReward(reward)} rightIcon={<Gift />}>
                                             使用
                                         </Button>
                                         <IconButton

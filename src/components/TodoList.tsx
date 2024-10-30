@@ -12,7 +12,7 @@ function Todo({ children, className }: TodoProps) {
             <div className="flex flex-col ">
                 <div className="flex justify-between pb-3">
                     <h2 className="text-xl font-semibold mb-3 text-center text-indigo-800">{children}</h2>
-                    <Button>Add</Button>
+                    <Button>設定</Button>
                 </div>
                 <div className={`bg-white shadow-md rounded-lg p-4 ${className}`}>
 
