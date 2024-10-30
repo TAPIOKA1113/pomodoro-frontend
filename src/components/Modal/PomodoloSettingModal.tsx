@@ -19,7 +19,8 @@ import { FiX } from 'react-icons/fi'
 
 interface Habit {
     title: string;
-    setCount: number;
+    setNumber: number;
+    currentSets: number;
 }
 
 interface HabitSettingModalProps {
@@ -31,36 +32,36 @@ interface HabitSettingModalProps {
 
 export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialHabits }: HabitSettingModalProps) {
 
-    const [habits, setHabits] = useState<Habit[]>([{ title: '', setCount: 1 }]);
+    const [pomodolos, setPomodolos] = useState<Habit[]>([{ title: '', setNumber: 1, currentSets: 0 }]);
 
 
     useEffect(() => {
         if (isOpen) {
-            setHabits([...initialHabits, { title: '', setCount: 1 }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
+            setPomodolos([...initialHabits, { title: '', setNumber: 1, currentSets: 0 }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
         }
     }, [isOpen, initialHabits]);
 
     const handleInputChange = (index: number, value: string) => {
-        const newHabits = [...habits];
+        const newHabits = [...pomodolos];
         newHabits[index] = { ...newHabits[index], title: value };
 
-        if (value === '' && habits[index + 1]?.title === '' && index !== habits.length - 1) {
+        if (value === '' && pomodolos[index + 1]?.title === '' && index !== pomodolos.length - 1) {
             newHabits.splice(index, 1);
         }
 
-        setHabits(newHabits);
+        setPomodolos(newHabits);
     };
 
     const handlePointsChange = (index: number, value: number) => {
-        const newHabits = [...habits];
-        newHabits[index] = { ...newHabits[index], setCount: value };
-        setHabits(newHabits);
+        const newHabits = [...pomodolos];
+        newHabits[index] = { ...newHabits[index], setNumber: value };
+        setPomodolos(newHabits);
     };
 
     const addNewField = (index: number) => {
-        const currentValue = habits[index].title;
-        if (currentValue !== '' && index === habits.length - 1) {
-            setHabits([...habits, { title: '', setCount: 1 }]);
+        const currentValue = pomodolos[index].title;
+        if (currentValue !== '' && index === pomodolos.length - 1) {
+            setPomodolos([...pomodolos, { title: '', setNumber: 1, currentSets: 0 }]);
         }
     };
 
@@ -70,12 +71,12 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
 
 
     const handleDelete = (index: number) => {
-        if (habits.length === 1) {
-            setHabits([{ title: '', setCount: 1 }]);
+        if (pomodolos.length === 1) {
+            setPomodolos([{ title: '', setNumber: 1, currentSets: 0 }]);
             return;
         }
-        const newHabits = habits.filter((_, i) => i !== index);
-        setHabits(newHabits);
+        const newHabits = pomodolos.filter((_, i) => i !== index);
+        setPomodolos(newHabits);
     };
 
     return (
@@ -85,7 +86,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
             <ModalCloseButton />
             <ModalBody>
                 <VStack align="stretch">
-                    {habits[0].title.trim() !== '' && (
+                    {pomodolos[0].title.trim() !== '' && (
 
                         <Flex justify="end" fontSize="md" color="gray.500">
                             <Text px="16">
@@ -94,7 +95,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
                         </Flex>
 
                     )}
-                    {habits.map((habit, index) => (
+                    {pomodolos.map((habit, index) => (
                         <HStack key={index} >
                             <Input
                                 data-index={index}
@@ -108,7 +109,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
                                 <>
 
                                     <NumberInput
-                                        value={habit.setCount}
+                                        value={habit.setNumber}
                                         onChange={(_, value) => handlePointsChange(index, value)}
                                         min={1}
                                         max={10}
@@ -144,8 +145,8 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
                     colorScheme="green"
                     variant="ghost"
                     onClick={() => {
-                        const validHabits = habits.filter(h => h.title.trim() !== '');
-                        onSave(validHabits);
+                        const validPomodolos = pomodolos.filter(h => h.title.trim() !== '');
+                        onSave(validPomodolos);
                     }}
                 >
                     確定

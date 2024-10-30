@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import PomodoloSettingModal from './Modal/PomodoloSettingModal';
 import { Button, VStack, Text, HStack, IconButton } from '@yamada-ui/react'
-import { FiMinus } from 'react-icons/fi';
+import { FiMinus, FiPlus } from 'react-icons/fi';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 interface Pomodolo {
     title: string;
-    setCount: number;
-    remainingSets: number;
+    setNumber: number;
+    currentSets: number;
 }
 
 interface PomodoloListProps {
@@ -20,29 +20,58 @@ function PomodoloList({ children, className, onPointsUpdate }: PomodoloListProps
     const [isOpen, setIsOpen] = useState(false);
     const [pomodolos, setPomodolos] = useLocalStorage<Pomodolo[]>("pomodolos", []);
 
-    const handleSetComplete = (title: string) => {
+    const handleMinusPomodolo = (title: string) => {
         setPomodolos(prev => prev.map(pomodolo => {
-            if (pomodolo.title === title && pomodolo.remainingSets > 0) {
-                // 残りセット数を減らし、ポイントを加算
-                onPointsUpdate?.(1);
-                return {
-                    ...pomodolo,
-                    remainingSets: pomodolo.remainingSets - 1
-                };
+            if (pomodolo.title === title) {
+                if (pomodolo.setNumber > pomodolo.currentSets) {
+                    // ポイントを減らす
+                    onPointsUpdate?.(-1);
+                    return {
+                        ...pomodolo,
+                        currentSets: pomodolo.currentSets - 1
+                    };
+                } else {
+                    onPointsUpdate?.(-1.5);
+                    return {
+                        ...pomodolo,
+                        currentSets: pomodolo.currentSets - 1
+                    };
+                }
+
+            }
+            return pomodolo;
+        }));
+    };
+
+    const handlePlusPomodolo = (title: string) => {
+        setPomodolos(prev => prev.map(pomodolo => {
+            if (pomodolo.title === title) {
+                if (pomodolo.setNumber > pomodolo.currentSets) {
+                    // ポイントを加算
+                    onPointsUpdate?.(1);
+                    return {
+                        ...pomodolo,
+                        currentSets: pomodolo.currentSets + 1
+                    };
+                } else {
+                    onPointsUpdate?.(1.5);
+                    return {
+                        ...pomodolo,
+                        currentSets: pomodolo.currentSets + 1
+                    };
+                }
+
             }
             return pomodolo;
         }));
     };
 
     const handleSavePomodolo = (newPomodolos: Pomodolo[]) => {
-        // 新しいポモドーロリストを保存する際に、remainingSetsを初期化
-        const pomodolosWithRemaining = newPomodolos.map(pomodolo => ({
-            ...pomodolo,
-            remainingSets: pomodolo.setCount
-        }));
-        setPomodolos(pomodolosWithRemaining);
+        // 既存のポモドーロのremainingsSetsを維持しつつ、新しいポモドーロは初期化
+        setPomodolos(newPomodolos);
         setIsOpen(false);
     };
+
 
 
     return (
@@ -58,15 +87,21 @@ function PomodoloList({ children, className, onPointsUpdate }: PomodoloListProps
                             <HStack key={index} justify="space-between">
                                 <Text>{pomodolo.title}</Text>
                                 <HStack >
-                                    <Text fontSize="sm" color={pomodolo.remainingSets > 0 ? "gray.500" : "red.500"}>
-                                        残り {pomodolo.remainingSets} / {pomodolo.setCount} セット
-                                    </Text>
                                     <IconButton
-                                        aria-label="セットを完了"
                                         icon={<FiMinus />}
                                         size="sm"
-                                        isDisabled={pomodolo.remainingSets <= 0}
-                                        onClick={() => handleSetComplete(pomodolo.title)}
+                                        isDisabled={pomodolo.currentSets <= 0}
+                                        onClick={() => handleMinusPomodolo(pomodolo.title)}
+                                    />
+
+                                    <Text fontSize="sm" color={pomodolo.currentSets >= pomodolo.setNumber ? "green.500" : "gray.500"}>
+                                        {pomodolo.currentSets} / {pomodolo.setNumber} セット
+                                    </Text>
+
+                                    <IconButton
+                                        icon={<FiPlus />}
+                                        size="sm"
+                                        onClick={() => handlePlusPomodolo(pomodolo.title)}
                                     />
                                 </HStack>
                             </HStack>
