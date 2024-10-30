@@ -16,7 +16,7 @@ interface PomodoloListProps {
     onPointsUpdate: (points: number) => void;
 }
 
-function PomodoloList({ children, className, onPointsUpdate }: PomodoloListProps) {
+function PomodoloList({ children, onPointsUpdate }: PomodoloListProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [pomodolos, setPomodolos] = useLocalStorage<Pomodolo[]>("pomodolos", []);
 
@@ -77,11 +77,14 @@ function PomodoloList({ children, className, onPointsUpdate }: PomodoloListProps
     return (
         <>
             <div className="flex flex-col">
-                <div className="flex justify-between pb-3">
-                    <h2 className="text-xl font-semibold mb-4 text-center text-indigo-800">{children}</h2>
-                    <Button onClick={() => setIsOpen(true)}>設定</Button>
+                <div className="flex justify-between items-center pb-3">
+                    <div className="flex-1" />
+                    <h2 className="text-xl font-semibold mb-4 text-indigo-800">{children}</h2>
+                    <div className="flex-1 flex justify-end">
+                        <Button onClick={() => setIsOpen(true)}>設定</Button>
+                    </div>
                 </div>
-                <div className={`bg-white shadow-md rounded-lg p-4 ${className}`}>
+                <div className={`bg-white shadow-md rounded-lg w-[1000px] h-80 p-6`}>
                     <VStack align="stretch">
                         {pomodolos.map((pomodolo, index) => (
                             <HStack key={index} justify="space-between">

@@ -23,15 +23,15 @@ function Task() {
                 </div>
             </div>
             <div className="flex justify-center mb-8 ">
-                <PomodoloList className="w-80 h-80 bg-white rounded-lg shadow-xl p-6" onPointsUpdate={handlePointsUpdate}>
+                <PomodoloList onPointsUpdate={handlePointsUpdate}>
                     本日のポモドーロ
                 </PomodoloList>
             </div>
             <div className="flex justify-around ">
-                <Todo className="w-80 h-80 bg-white rounded-lg shadow-xl p-6">
+                <Todo >
                     Todoリスト
                 </Todo>
-                <HabitList className="w-80 h-80 bg-white rounded-lg shadow-xl p-6" onPointsUpdate={handlePointsUpdate}>
+                <HabitList onPointsUpdate={handlePointsUpdate}>
                     日々の習慣
                 </HabitList>
             </div>

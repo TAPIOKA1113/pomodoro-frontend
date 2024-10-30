@@ -10,7 +10,7 @@ interface HabitListProps {
     onPointsUpdate: (points: number) => void;
 }
 
-function HabitList({ children, className, onPointsUpdate }: HabitListProps) {
+function HabitList({ children, onPointsUpdate }: HabitListProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [habits, setHabits] = useLocalStorage<Habit[]>("habits", []);
 
@@ -36,11 +36,14 @@ function HabitList({ children, className, onPointsUpdate }: HabitListProps) {
     return (
         <>
             <div className="flex flex-col">
-                <div className="flex justify-between pb-3">
-                    <h2 className="text-xl font-semibold mb-3 text-center text-indigo-800">{children}</h2>
-                    <Button onClick={() => setIsOpen(true)}>設定</Button>
+                <div className="flex justify-between items-center pb-3">
+                    <div className="flex-1" />
+                    <h2 className="text-xl font-semibold mb-4 text-indigo-800">{children}</h2>
+                    <div className="flex-1 flex justify-end">
+                        <Button onClick={() => setIsOpen(true)}>設定</Button>
+                    </div>
                 </div>
-                <div className={`bg-white shadow-md rounded-lg p-4 ${className}`}>
+                <div className={`bg-white shadow-md rounded-lg w-[500px] h-80 p-6`}>
                     <VStack align="stretch">
                         {habits.map((habit, index) => (
                             <HStack key={index} justify="space-between">
