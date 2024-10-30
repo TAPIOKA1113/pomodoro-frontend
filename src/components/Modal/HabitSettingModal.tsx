@@ -12,6 +12,9 @@ import {
     HStack,
     IconButton,
     NumberInput,
+    Text,
+    Box,
+    Flex
 } from '@yamada-ui/react'
 import { FiX } from 'react-icons/fi'
 
@@ -83,6 +86,15 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
             <ModalCloseButton />
             <ModalBody>
                 <VStack align="stretch">
+                    {habits[0].title.trim() !== '' && (
+
+                        <Flex justify="end" fontSize="md" color="gray.500">
+                            <Text px="15">
+                                ポイント数
+                            </Text>
+                        </Flex>
+
+                    )}
                     {habits.map((habit, index) => (
                         <HStack key={index} >
                             <Input
@@ -95,6 +107,7 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
                             />
                             {habit.title.trim() !== '' && (
                                 <>
+
                                     <NumberInput
                                         value={habit.points}
                                         onChange={(_, value) => handlePointsChange(index, value)}
@@ -104,6 +117,7 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
                                         size="md"
                                     >
                                     </NumberInput>
+
                                     <IconButton
                                         aria-label="習慣を削除"
                                         icon={<FiX />}
