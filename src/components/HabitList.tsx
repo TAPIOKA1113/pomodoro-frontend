@@ -10,18 +10,25 @@ interface Habit {
 interface HabitListProps {
     children: React.ReactNode;
     className?: string;
+    onPointsUpdate: (points: number) => void;
 }
 
-function HabitList({ children, className }: HabitListProps) {
+function HabitList({ children, className, onPointsUpdate }: HabitListProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [habits, setHabits] = useState<Habit[]>([]);
     const [completedHabits, setCompletedHabits] = useState<string[]>([]);
 
     const handleHabitComplete = (title: string) => {
+
+        const habit = habits.find(h => h.title === title);
+        if (!habit) return;
+
         if (completedHabits.includes(title)) {
             setCompletedHabits(completedHabits.filter(h => h !== title));
+            onPointsUpdate?.(-(habit.points));
         } else {
             setCompletedHabits([...completedHabits, title]);
+            onPointsUpdate?.(habit.points);
         }
     };
 

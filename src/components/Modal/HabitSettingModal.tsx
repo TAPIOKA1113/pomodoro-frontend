@@ -31,9 +31,10 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
 
     const [habits, setHabits] = useState<Habit[]>([{ title: '', points: 1 }]);
 
+
     useEffect(() => {
         if (isOpen) {
-            setHabits([...initialHabits, { title: '', points: 1 }]);
+            setHabits([...initialHabits, { title: '', points: 1 }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
         }
     }, [isOpen, initialHabits]);
 
