@@ -1,19 +1,22 @@
 import { useState } from 'react';
-import {
-    FormControl,
-    Input,
-    useDisclosure,
-    Select,
-    Option
-} from "@yamada-ui/react"
-import { Button } from "@yamada-ui/react"
+import Todo from '../components/TodoList';
+import PomodoloList from '../components/PomodoloList';
+import HabitList from '../components/HabitList';
+
+
 
 function Task() {
 
     return (
-        <>
-            <h1>タスク管理</h1>
-        </>
+        <div className="flex flex-col justify-around h-screen p-8">
+            <div className="flex justify-center ">
+                <PomodoloList className="w-64 h-64">本日のポモドーロ</PomodoloList>
+            </div>
+            <div className="flex justify-around">
+                <Todo className="w-64 h-64">Todoリスト</Todo>
+                <HabitList className="w-64 h-64">日々の習慣</HabitList>
+            </div>
+        </div>
     );
 }
 
