@@ -15,7 +15,7 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [habits, setHabits] = useLocalStorage<Habit[]>("habits", []);
 
-    // 特定の日付の習慣が完了しているかチェックする関数
+    // 特定の日付の習慣が完了しているかチェック
     const isHabitCompletedForDate = (habit: Habit, date: Date) => {
         const dateStr = date.toISOString().split('T')[0];
         return habit.completedDates.includes(dateStr);
@@ -23,7 +23,7 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
 
 
     const handleHabitComplete = (title: string, date: Date) => {
-        const dateStr = date.toISOString().split('T')[0];
+        const dateStr = date.toISOString().split('T')[0]; // DatePickerで選択した日付　
 
         setHabits(prev => prev.map(habit => {
             if (habit.title === title) {
