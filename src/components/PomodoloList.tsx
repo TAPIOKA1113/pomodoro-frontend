@@ -8,22 +8,24 @@ interface Pomodolo {
     title: string;
     setNumber: number;
     currentSets: number;
+    date: Date;
 }
 
 interface PomodoloListProps {
     children: React.ReactNode;
     className?: string;
     onPointsUpdate: (points: number) => void;
+    selectedDate: Date;
 }
 
-function PomodoloList({ children, onPointsUpdate }: PomodoloListProps) {
+function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [pomodolos, setPomodolos] = useLocalStorage<Pomodolo[]>("pomodolos", []);
 
     const handleMinusPomodolo = (title: string) => {
         setPomodolos(prev => prev.map(pomodolo => {
             if (pomodolo.title === title) {
-                if (pomodolo.setNumber > pomodolo.currentSets) {
+                if (pomodolo.setNumber >= pomodolo.currentSets) {
                     // ポイントを減らす
                     onPointsUpdate?.(-1);
                     return {
@@ -86,7 +88,9 @@ function PomodoloList({ children, onPointsUpdate }: PomodoloListProps) {
                 </div>
                 <div className={`bg-white shadow-md rounded-lg w-[1000px] h-80 p-6`}>
                     <VStack align="stretch">
-                        {pomodolos.map((pomodolo, index) => (
+                        {pomodolos.filter(pomodolo =>
+                            new Date(pomodolo.date).toDateString() === selectedDate.toDateString()
+                        ).map((pomodolo, index) => (
                             <HStack key={index} justify="space-between">
                                 <Text>{pomodolo.title}</Text>
                                 <HStack >
@@ -116,9 +120,9 @@ function PomodoloList({ children, onPointsUpdate }: PomodoloListProps) {
                         )}
                         {pomodolos.length >= 1 && (
                             <Text color="gray.500" textAlign="center">
-                                所要時間：
+                                残り所要時間：
                                 {(() => {
-                                    const totalMinutes = pomodolos.reduce((total, pomodolo) => total + pomodolo.setNumber * 30, 0);
+                                    const totalMinutes = pomodolos.filter(pomodolo => new Date(pomodolo.date).toDateString() === selectedDate.toDateString()).reduce((total, pomodolo) => total + (pomodolo.setNumber - pomodolo.currentSets) * 30, 0);
                                     const hours = Math.floor(totalMinutes / 60);
                                     const minutes = totalMinutes % 60;
                                     return hours > 0

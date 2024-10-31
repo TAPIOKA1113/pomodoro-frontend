@@ -15,7 +15,7 @@ import {
     Text,
     Flex
 } from '@yamada-ui/react'
-import { FiX } from 'react-icons/fi'
+import { Trash2 } from 'lucide-react'
 import { Habit } from '../../type/habit';
 
 
@@ -28,12 +28,12 @@ interface HabitSettingModalProps {
 
 export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabits }: HabitSettingModalProps) {
 
-    const [habits, setHabits] = useState<Habit[]>([{ title: '', points: 1, isCompleted: false }]);
+    const [habits, setHabits] = useState<Habit[]>([{ title: '', points: 1, isCompleted: false, completedDates: [] }]);
 
 
     useEffect(() => {
         if (isOpen) {
-            setHabits([...initialHabits, { title: '', points: 1, isCompleted: false }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
+            setHabits([...initialHabits, { title: '', points: 1, isCompleted: false, completedDates: [] }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
         }
     }, [isOpen, initialHabits]);
 
@@ -57,7 +57,7 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
     const addNewField = (index: number) => {
         const currentValue = habits[index].title;
         if (currentValue !== '' && index === habits.length - 1) {
-            setHabits([...habits, { title: '', points: 1, isCompleted: false }]);
+            setHabits([...habits, { title: '', points: 1, isCompleted: false, completedDates: [] }]);
         }
     };
 
@@ -68,7 +68,7 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
 
     const handleDelete = (index: number) => {
         if (habits.length === 1) {
-            setHabits([{ title: '', points: 1, isCompleted: false }]);
+            setHabits([{ title: '', points: 1, isCompleted: false, completedDates: [] }]);
             return;
         }
         const newHabits = habits.filter((_, i) => i !== index);
@@ -116,7 +116,7 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
 
                                     <IconButton
                                         aria-label="習慣を削除"
-                                        icon={<FiX />}
+                                        icon={<Trash2 />}
                                         variant="ghost"
                                         colorScheme="red"
                                         size="sm"

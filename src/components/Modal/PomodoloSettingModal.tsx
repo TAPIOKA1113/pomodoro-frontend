@@ -15,12 +15,13 @@ import {
     Text,
     Flex
 } from '@yamada-ui/react'
-import { FiX } from 'react-icons/fi'
+import { Trash2 } from 'lucide-react'
 
 interface Habit {
     title: string;
     setNumber: number;
     currentSets: number;
+    date: Date;
 }
 
 interface HabitSettingModalProps {
@@ -32,12 +33,12 @@ interface HabitSettingModalProps {
 
 export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialHabits }: HabitSettingModalProps) {
 
-    const [pomodolos, setPomodolos] = useState<Habit[]>([{ title: '', setNumber: 1, currentSets: 0 }]);
+    const [pomodolos, setPomodolos] = useState<Habit[]>([{ title: '', setNumber: 1, currentSets: 0, date: new Date() }]);
 
 
     useEffect(() => {
         if (isOpen) {
-            setPomodolos([...initialHabits, { title: '', setNumber: 1, currentSets: 0 }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
+            setPomodolos([...initialHabits, { title: '', setNumber: 1, currentSets: 0, date: new Date() }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
         }
     }, [isOpen, initialHabits]);
 
@@ -61,7 +62,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
     const addNewField = (index: number) => {
         const currentValue = pomodolos[index].title;
         if (currentValue !== '' && index === pomodolos.length - 1) {
-            setPomodolos([...pomodolos, { title: '', setNumber: 1, currentSets: 0 }]);
+            setPomodolos([...pomodolos, { title: '', setNumber: 1, currentSets: 0, date: new Date() }]);
         }
     };
 
@@ -72,7 +73,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
 
     const handleDelete = (index: number) => {
         if (pomodolos.length === 1) {
-            setPomodolos([{ title: '', setNumber: 1, currentSets: 0 }]);
+            setPomodolos([{ title: '', setNumber: 1, currentSets: 0, date: new Date() }]);
             return;
         }
         const newHabits = pomodolos.filter((_, i) => i !== index);
@@ -120,7 +121,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
 
                                     <IconButton
                                         aria-label="習慣を削除"
-                                        icon={<FiX />}
+                                        icon={<Trash2 />}
                                         variant="ghost"
                                         colorScheme="red"
                                         size="sm"

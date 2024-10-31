@@ -8,20 +8,37 @@ interface HabitListProps {
     children: React.ReactNode;
     className?: string;
     onPointsUpdate: (points: number) => void;
+    selectedDate: Date;
 }
 
-function HabitList({ children, onPointsUpdate }: HabitListProps) {
+function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [habits, setHabits] = useLocalStorage<Habit[]>("habits", []);
 
+    // 特定の日付の習慣が完了しているかチェックする関数
+    const isHabitCompletedForDate = (habit: Habit, date: Date) => {
+        const dateStr = date.toISOString().split('T')[0];
+        return habit.completedDates.includes(dateStr);
+    };
 
-    const handleHabitComplete = (title: string) => {
+
+    const handleHabitComplete = (title: string, date: Date) => {
+        const dateStr = date.toISOString().split('T')[0];
+
         setHabits(prev => prev.map(habit => {
             if (habit.title === title) {
+                const isCurrentlyCompleted = isHabitCompletedForDate(habit, date);
+                const newCompletedDates = isCurrentlyCompleted
+                    ? habit.completedDates.filter(d => d !== dateStr)
+                    : [...habit.completedDates, dateStr];
+
                 // ポイントの更新
-                onPointsUpdate?.(habit.isCompleted ? -habit.points : habit.points);
-                // 完了状態を反転
-                return { ...habit, isCompleted: !habit.isCompleted };
+                onPointsUpdate?.(isCurrentlyCompleted ? -habit.points : habit.points);
+
+                return {
+                    ...habit,
+                    completedDates: newCompletedDates
+                };
             }
             return habit;
         }));
@@ -48,8 +65,8 @@ function HabitList({ children, onPointsUpdate }: HabitListProps) {
                         {habits.map((habit, index) => (
                             <HStack key={index} justify="space-between" p="2" _hover={{ bg: "gray.50" }} rounded="md">
                                 <Checkbox
-                                    isChecked={habit.isCompleted}
-                                    onChange={() => handleHabitComplete(habit.title)}
+                                    isChecked={isHabitCompletedForDate(habit, selectedDate)}
+                                    onChange={() => handleHabitComplete(habit.title, selectedDate)}
                                     colorScheme="primary"
                                     size="lg"
                                     _checked={{
@@ -60,9 +77,10 @@ function HabitList({ children, onPointsUpdate }: HabitListProps) {
                                         }
                                     }}
                                 >
-                                    <Text fontSize="md" ml="2" fontWeight={habit.isCompleted ? "medium" : "normal"}
-                                        color={habit.isCompleted ? "gray.500" : "gray.800"}
-                                        textDecoration={habit.isCompleted ? "line-through" : "none"}>
+                                    <Text fontSize="md" ml="2"
+                                        fontWeight={isHabitCompletedForDate(habit, selectedDate) ? "medium" : "normal"}
+                                        color={isHabitCompletedForDate(habit, selectedDate) ? "gray.500" : "gray.800"}
+                                        textDecoration={isHabitCompletedForDate(habit, selectedDate) ? "line-through" : "none"}>
                                         {habit.title}
                                     </Text>
                                 </Checkbox>
