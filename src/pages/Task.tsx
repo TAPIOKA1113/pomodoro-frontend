@@ -40,7 +40,8 @@ function Task() {
                         <DatePicker
                             selected={selectedDate}
                             onChange={(date: Date | null) => setSelectedDate(date || new Date())}
-                            dateFormat="yyyy/MM/dd"
+                            // 今日ならyyyy/MM/dd (今日)
+                            dateFormat={selectedDate.toDateString() === new Date().toDateString() ? "yyyy/MM/dd (今日)" : "yyyy/MM/dd"}
                             locale="ja"
                             className="w-60 py-3 text-lg font-semibold text-indigo-700 bg-white border-2 border-indigo-300 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent cursor-pointer transition-all duration-300 ease-in-out hover:bg-indigo-50 hover:border-indigo-400 text-center"
                         />

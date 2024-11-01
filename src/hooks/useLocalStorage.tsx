@@ -12,10 +12,6 @@ function useLocalStorage<T>(key: string, initialValue: T) {
         }
     };
 
-    // 最終更新日の状態
-    const [lastUpdate, setLastUpdate] = useState(() =>
-        getStoredValue('lastUpdate', new Date().toDateString())
-    );
 
     // 保存する値の状態
     const [storedValue, setStoredValue] = useState<T>(() =>
@@ -33,17 +29,6 @@ function useLocalStorage<T>(key: string, initialValue: T) {
         }
     };
 
-    // 日付が変わったかチェックし、必要に応じてリセットする
-    useEffect(() => {
-        const today = new Date().toDateString();
-
-        if (lastUpdate !== today) {
-            console.log('日付が変更されました。データをリセットします。');
-            setValue(initialValue);
-            setLastUpdate(today);
-            window.localStorage.setItem('lastUpdate', today);
-        }
-    }, [lastUpdate, initialValue, key]);
 
     // 値が変更されたらLocalStorageに保存
     useEffect(() => {
