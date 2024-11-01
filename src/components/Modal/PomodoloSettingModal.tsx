@@ -28,18 +28,18 @@ interface PomodoloSettingModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSave: any;
-    initialHabits: any;
+    allPomodolos: any;
     selectedDate: Date;
 }
 
-export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialHabits, selectedDate }: PomodoloSettingModalProps) {
+export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomodolos, selectedDate }: PomodoloSettingModalProps) {
 
     const [pomodolos, setPomodolos] = useState<Pomodolo[]>([{ title: '', setNumber: 1, currentSets: 0, date: new Date() }]);
 
 
     useEffect(() => {
         if (isOpen) {
-            const filteredPomodolos = initialHabits.filter((pomodolo: Pomodolo) => {
+            const filteredPomodolos = allPomodolos.filter((pomodolo: Pomodolo) => {
                 const pomodoloDate = new Date(pomodolo.date);
                 return pomodoloDate.toDateString() === selectedDate.toDateString();
             });
@@ -50,7 +50,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
                 { title: '', setNumber: 1, currentSets: 0, date: selectedDate }
             ]);
         }
-    }, [isOpen, initialHabits, selectedDate]);
+    }, [isOpen, allPomodolos, selectedDate]);
 
     const handleInputChange = (index: number, value: string) => {
         const newPomodolos = [...pomodolos];
@@ -75,7 +75,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
             setPomodolos([...pomodolos, { title: '', setNumber: 1, currentSets: 0, date: selectedDate }]);
         }
     };
-    
+
     const handleBlur = (index: number) => {
         addNewField(index);
     };
@@ -90,10 +90,35 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
         setPomodolos(newPomodolos);
     };
 
+    const handleCopyButton = (date: Date) => {
+        const previousDate = new Date(date);
+        previousDate.setDate(previousDate.getDate() - 1);
+
+        // 前日のポモドーロを取得し、新しい日付で複製
+        const previousPomodolos = allPomodolos
+            .filter((pomodolo: Pomodolo) => {
+                const pomodoloDate = new Date(pomodolo.date);
+                return pomodoloDate.toDateString() === previousDate.toDateString();
+            })
+            .map((pomodolo: Pomodolo) => ({
+                ...pomodolo,
+                date: selectedDate,
+                currentSets: 0
+            }));
+
+
+        setPomodolos([
+            ...previousPomodolos,
+            { title: '', setNumber: 1, currentSets: 0, date: selectedDate }
+        ]);
+    }
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} size='3xl'>
             <ModalOverlay />
-            <ModalHeader>ポモドーロの設定</ModalHeader>
+            <ModalHeader>ポモドーロの設定
+                <Button onClick={() => handleCopyButton(selectedDate)}>前日の内容をコピー</Button>
+            </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
                 <VStack align="stretch">
@@ -113,7 +138,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
                                 value={pomodolo.title}
                                 onChange={(e) => handleInputChange(index, e.target.value)}
                                 onBlur={() => handleBlur(index)}
-                                placeholder="新しいポモドーロの追加"
+                                placeholder="新しいポモドーロを追加"
                                 flex={1}
                             />
                             {pomodolo.title.trim() !== '' && (

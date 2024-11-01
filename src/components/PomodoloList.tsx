@@ -145,10 +145,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
                 onSave={handleSavePomodolo}
-                // 選択された日付のポモドーロを渡す
-                initialHabits={pomodolos.filter(pomodolo =>
-                    new Date(pomodolo.date).toDateString() === selectedDate.toDateString()
-                )}
+                allPomodolos={pomodolos}
                 selectedDate={selectedDate}
             />
         </>
