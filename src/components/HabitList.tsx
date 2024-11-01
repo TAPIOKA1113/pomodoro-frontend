@@ -102,6 +102,7 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
                 onClose={() => setIsOpen(false)}
                 onSave={handleSaveHabits}
                 initialHabits={habits}
+                
             />
         </>
     );

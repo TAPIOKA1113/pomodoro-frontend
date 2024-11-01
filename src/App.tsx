@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 import { Box } from "@yamada-ui/react"
 import Sidebar from './components/Sidebar'
 import './App.css'
@@ -14,6 +14,7 @@ function App() {
         <Sidebar />
       </Box>
       <Routes>
+        <Route path="/" element={<Navigate to="/task" replace />} />
         <Route path="/task" element={<Task />} />
         <Route path="/reward" element={<Reward />} />
         <Route path="/report" element={<Report />} />

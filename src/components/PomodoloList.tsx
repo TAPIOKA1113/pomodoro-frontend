@@ -69,12 +69,19 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
     };
 
     const handleSavePomodolo = (newPomodolos: Pomodolo[]) => {
-        // ポモドーロ初期化
-        setPomodolos(newPomodolos);
+        setPomodolos(prev => {
+            // 選択された日付以外のポモドーロを保持
+            const otherDatePomodolos = prev.filter(pomodolo => {
+                // 文字列をDateオブジェクトに変換してから比較
+                const pomodoloDate = new Date(pomodolo.date);
+                return pomodoloDate.toDateString() !== selectedDate.toDateString();
+            });
+
+            // 選択された日付の新しいポモドーロと、他の日付のポモドーロを結合
+            return [...otherDatePomodolos, ...newPomodolos];
+        });
         setIsOpen(false);
     };
-
-
 
     return (
         <>
@@ -138,7 +145,11 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
                 onSave={handleSavePomodolo}
-                initialHabits={pomodolos}
+                // 選択された日付のポモドーロを渡す
+                initialHabits={pomodolos.filter(pomodolo =>
+                    new Date(pomodolo.date).toDateString() === selectedDate.toDateString()
+                )}
+                selectedDate={selectedDate}
             />
         </>
     );

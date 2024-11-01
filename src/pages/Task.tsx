@@ -8,8 +8,13 @@ import HabitList from '../components/HabitList';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 function Task() {
+
+    const getJapanDate = () => {
+        return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+    };
+
     const [totalPoints, setTotalPoints] = useLocalStorage<number>("totalPoints", 0);
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [selectedDate, setSelectedDate] = useState<Date>(getJapanDate());
 
     const handlePointsUpdate = (points: number) => {
         setTotalPoints(prev => Math.max(0, prev + points));
@@ -24,9 +29,14 @@ function Task() {
                 >
                     前日
                 </button>
+
                 <div className="relative group">
 
-                    <div className="relative group">
+                    <div
+                        className="relative group cursor-pointer"
+                        onClick={() => setSelectedDate(new Date())}
+                        title="クリックで今日の日付に戻ります"
+                    >
                         <DatePicker
                             selected={selectedDate}
                             onChange={(date: Date | null) => setSelectedDate(date || new Date())}
@@ -45,6 +55,7 @@ function Task() {
                 >
                     翌日
                 </button>
+
 
                 <div className="absolute right-0 bg-white rounded-full shadow-lg px-6 py-3 flex items-center space-x-2">
                     <Star className="text-yellow-400 w-6 h-6" />

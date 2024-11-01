@@ -17,46 +17,56 @@ import {
 } from '@yamada-ui/react'
 import { Trash2 } from 'lucide-react'
 
-interface Habit {
+interface Pomodolo {
     title: string;
     setNumber: number;
     currentSets: number;
     date: Date;
 }
 
-interface HabitSettingModalProps {
+interface PomodoloSettingModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSave: any;
     initialHabits: any;
+    selectedDate: Date;
 }
 
-export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialHabits }: HabitSettingModalProps) {
+export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialHabits, selectedDate }: PomodoloSettingModalProps) {
 
-    const [pomodolos, setPomodolos] = useState<Habit[]>([{ title: '', setNumber: 1, currentSets: 0, date: new Date() }]);
+    const [pomodolos, setPomodolos] = useState<Pomodolo[]>([{ title: '', setNumber: 1, currentSets: 0, date: new Date() }]);
 
 
     useEffect(() => {
         if (isOpen) {
-            setPomodolos([...initialHabits, { title: '', setNumber: 1, currentSets: 0, date: new Date() }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
+            const filteredHabits = initialHabits.filter((pomodolo: Pomodolo) => {
+                const pomodoloDate = new Date(pomodolo.date);
+                return pomodoloDate.toDateString() === selectedDate.toDateString();
+            });
+            console.log(filteredHabits);
+
+            setPomodolos([
+                ...filteredHabits,
+                { title: '', setNumber: 1, currentSets: 0, date: selectedDate }
+            ]);
         }
-    }, [isOpen, initialHabits]);
+    }, [isOpen, initialHabits, selectedDate]);
 
     const handleInputChange = (index: number, value: string) => {
-        const newHabits = [...pomodolos];
-        newHabits[index] = { ...newHabits[index], title: value };
+        const newPomodolos = [...pomodolos];
+        newPomodolos[index] = { ...newPomodolos[index], title: value };
 
         if (value === '' && pomodolos[index + 1]?.title === '' && index !== pomodolos.length - 1) {
-            newHabits.splice(index, 1);
+            newPomodolos.splice(index, 1);
         }
 
-        setPomodolos(newHabits);
+        setPomodolos(newPomodolos);
     };
 
     const handlePointsChange = (index: number, value: number) => {
-        const newHabits = [...pomodolos];
-        newHabits[index] = { ...newHabits[index], setNumber: value };
-        setPomodolos(newHabits);
+        const newPomodolos = [...pomodolos];
+        newPomodolos[index] = { ...newPomodolos[index], setNumber: value };
+        setPomodolos(newPomodolos);
     };
 
     const addNewField = (index: number) => {
@@ -76,8 +86,8 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
             setPomodolos([{ title: '', setNumber: 1, currentSets: 0, date: new Date() }]);
             return;
         }
-        const newHabits = pomodolos.filter((_, i) => i !== index);
-        setPomodolos(newHabits);
+        const newPomodolos = pomodolos.filter((_, i) => i !== index);
+        setPomodolos(newPomodolos);
     };
 
     return (
@@ -96,21 +106,21 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
                         </Flex>
 
                     )}
-                    {pomodolos.map((habit, index) => (
+                    {pomodolos.map((pomodolo, index) => (
                         <HStack key={index} >
                             <Input
                                 data-index={index}
-                                value={habit.title}
+                                value={pomodolo.title}
                                 onChange={(e) => handleInputChange(index, e.target.value)}
                                 onBlur={() => handleBlur(index)}
                                 placeholder="新しいポモドーロの追加"
                                 flex={1}
                             />
-                            {habit.title.trim() !== '' && (
+                            {pomodolo.title.trim() !== '' && (
                                 <>
 
                                     <NumberInput
-                                        value={habit.setNumber}
+                                        value={pomodolo.setNumber}
                                         onChange={(_, value) => handlePointsChange(index, value)}
                                         min={1}
                                         max={10}
