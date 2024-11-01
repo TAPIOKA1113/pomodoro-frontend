@@ -39,14 +39,14 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
 
     useEffect(() => {
         if (isOpen) {
-            const filteredHabits = initialHabits.filter((pomodolo: Pomodolo) => {
+            const filteredPomodolos = initialHabits.filter((pomodolo: Pomodolo) => {
                 const pomodoloDate = new Date(pomodolo.date);
                 return pomodoloDate.toDateString() === selectedDate.toDateString();
             });
-            console.log(filteredHabits);
+            console.log(filteredPomodolos);
 
             setPomodolos([
-                ...filteredHabits,
+                ...filteredPomodolos,
                 { title: '', setNumber: 1, currentSets: 0, date: selectedDate }
             ]);
         }
@@ -72,10 +72,10 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, initialH
     const addNewField = (index: number) => {
         const currentValue = pomodolos[index].title;
         if (currentValue !== '' && index === pomodolos.length - 1) {
-            setPomodolos([...pomodolos, { title: '', setNumber: 1, currentSets: 0, date: new Date() }]);
+            setPomodolos([...pomodolos, { title: '', setNumber: 1, currentSets: 0, date: selectedDate }]);
         }
     };
-
+    
     const handleBlur = (index: number) => {
         addNewField(index);
     };
