@@ -1,16 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PomodoloSettingModal from './Modal/PomodoloSettingModal';
 import { Button, VStack, Text, HStack, IconButton } from '@yamada-ui/react'
 import { FiMinus, FiPlus } from 'react-icons/fi';
-import useLocalStorage from '../hooks/useLocalStorage';
+// import useLocalStorage from '../hooks/useLocalStorage';
+import { Pomodolo } from '../type/pomodolo';
+import { fetchPomodolos, updateSetPomodolo, addPomodoloItem } from '../utils/supabaseFunction';
 
-interface Pomodolo {
-    id: string;
-    title: string;
-    setNumber: number;
-    currentSets: number;
-    date: Date;
-}
 
 interface PomodoloListProps {
     children: React.ReactNode;
@@ -21,9 +16,19 @@ interface PomodoloListProps {
 
 function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [pomodolos, setPomodolos] = useLocalStorage<Pomodolo[]>("pomodolos", []);
+    const [pomodolos, setPomodolos] = useState<Pomodolo[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await fetchPomodolos(selectedDate);
+            setPomodolos(data || []);
+        };
+        fetchData();
+    }, [selectedDate]);
 
     const handleMinusPomodolo = (id: string) => {
+
+        updateSetPomodolo(id, -1);
         setPomodolos(prev => prev.map(pomodolo => {
             if (pomodolo.id === id) {
                 if (pomodolo.setNumber >= pomodolo.currentSets) {
@@ -47,6 +52,10 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
     };
 
     const handlePlusPomodolo = (id: string) => {
+
+        updateSetPomodolo(id, 1);
+
+
         setPomodolos(prev => prev.map(pomodolo => {
             if (pomodolo.id === id) {
                 if (pomodolo.setNumber > pomodolo.currentSets) {
@@ -69,19 +78,17 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
         }));
     };
 
-    const handleSavePomodolo = (newPomodolos: Pomodolo[]) => {
-        setPomodolos(prev => {
-            // 選択された日付以外のポモドーロを保持
-            const otherDatePomodolos = prev.filter(pomodolo => {
-                // 文字列をDateオブジェクトに変換してから比較
-                const pomodoloDate = new Date(pomodolo.date);
-                return pomodoloDate.toDateString() !== selectedDate.toDateString();
-            });
+    const handleSavePomodolo = async (newPomodolos: Pomodolo[], selectedDate: Date) => {
+        // すべてのポモドーロの追加を待つ
+        await Promise.all(newPomodolos.map(pomodolo =>
+            addPomodoloItem(pomodolo.title, pomodolo.setNumber, selectedDate)
+        ));
 
-            // 選択された日付の新しいポモドーロと、他の日付のポモドーロを結合
-            return [...otherDatePomodolos, ...newPomodolos];
-        });
+        // データベースから最新のデータを取得
+        const updatedPomodolos = await fetchPomodolos(selectedDate);
+        setPomodolos(updatedPomodolos || []);
         setIsOpen(false);
+
     };
 
     return (

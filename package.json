@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@react-spring/web": "^9.7.5",
+    "@supabase/supabase-js": "^2.46.1",
     "@types/react-datepicker": "^7.0.0",
     "@yamada-ui/calendar": "^1.8.4",
     "@yamada-ui/lucide": "^1.7.1",
