@@ -133,6 +133,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                                     const totalMinutes = pomodolos.filter(pomodolo => new Date(pomodolo.date).toDateString() === selectedDate.toDateString()).reduce((total, pomodolo) => total + (pomodolo.setNumber - pomodolo.currentSets) * 30, 0);
                                     const hours = Math.floor(totalMinutes / 60);
                                     const minutes = totalMinutes % 60;
+                                    if (totalMinutes < 0) return '0分';
                                     return hours > 0
                                         ? `${hours}時間${minutes > 0 ? ` ${minutes}分` : ''}`
                                         : `${minutes}分`;
