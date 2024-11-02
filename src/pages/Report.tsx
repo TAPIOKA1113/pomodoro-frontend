@@ -2,7 +2,7 @@ import { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from '../components/Date/DatePicker';
 import useLocalStorage from '../hooks/useLocalStorage';
-
+import { Habit } from '../type/habit';
 interface Pomodolo {
     id: string;
     title: string;
@@ -14,6 +14,7 @@ interface Pomodolo {
 export default function Report() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [pomodoros] = useLocalStorage<Pomodolo[]>("pomodolos", []);
+    const [habits] = useLocalStorage<Habit[]>("habits", []);
 
     const handleDateChange = (date: Date | null) => {
         if (date) setSelectedDate(date);
@@ -23,11 +24,13 @@ export default function Report() {
         new Date(pomodoro.date).toDateString() === selectedDate.toDateString()
     );
 
+
+
     const totalSets = filteredPomodoros.reduce((acc, pomodoro) => acc + pomodoro.setNumber, 0);
     const completedSets = filteredPomodoros.reduce((acc, pomodoro) => acc + pomodoro.currentSets, 0);
     const completionRate = Math.min(totalSets > 0 ? (completedSets / totalSets) * 100 : 0, 100);
 
-    const totalPoints = filteredPomodoros.reduce((acc, pomodoro) => acc + pomodoro.currentSets, 0);
+    const totalPoints = filteredPomodoros.reduce((acc, pomodoro) => acc + pomodoro.currentSets, 0) + habits.filter(habit => habit.completedDates.includes(selectedDate.toISOString().split('T')[0])).reduce((acc, habit) => acc + habit.points, 0);
 
 
     return (
@@ -64,11 +67,16 @@ export default function Report() {
 
                     </div>
 
+                    <div className="mt-4">
+                        <h3 className="text-xl font-bold mb-2">ポモドーロ</h3>
+                    </div>
+
                     {filteredPomodoros.length === 0 ? (
                         <p className="text-center text-gray-500">
                             この日のポモドーロデータはありません
                         </p>
                     ) : (
+
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {filteredPomodoros.map((pomodoro) => (
                                 <div key={pomodoro.id} className="bg-gray-50 p-4 rounded-md shadow">
@@ -83,6 +91,28 @@ export default function Report() {
                                         {pomodoro.currentSets} / {pomodoro.setNumber} セット
                                         ({((pomodoro.currentSets / pomodoro.setNumber) * 100).toFixed(1)}%)
                                     </p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    <div className="mt-4">
+                        <h3 className="text-xl font-bold mb-2">習慣</h3>
+                    </div>
+
+                    {habits.length === 0 ? (
+                        <p className="text-center text-gray-500">
+                            習慣がありません
+                        </p>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {habits.map((habit) => (
+                                <div key={habit.title}
+                                    className={`p-4 rounded-md shadow transition-all duration-200 ${habit.completedDates.includes(selectedDate.toISOString().split('T')[0]) ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 border-2 border-gray-200'}`}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="font-semibold">{habit.title}</h3>
+
+                                    </div>
                                 </div>
                             ))}
                         </div>
