@@ -10,7 +10,7 @@ import {
     IconButton,
 } from "@yamada-ui/react"
 import { Menu } from "@yamada-ui/lucide"
-
+import { supabase } from '../utils/supabase'
 function Sidebar() {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const location = useLocation()
@@ -57,6 +57,17 @@ function Sidebar() {
                             onClick={onClose}
                         >
                             ご褒美の使用
+                        </Button>
+                        <Button
+                            onClick={async () => {
+                                await supabase.auth.signOut();
+                                onClose();
+                            }}
+                            variant="ghost"
+                            justifyContent="flex-start"
+                            colorScheme="red"
+                        >
+                            ログアウト
                         </Button>
 
                     </VStack>

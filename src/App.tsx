@@ -5,9 +5,17 @@ import './App.css'
 import Task from './pages/Task'
 import Reward from './pages/Reward'
 import Report from './pages/Report'
+import Auth from './components/Auth/Auth'
+import { useAuth } from './contexts/AuthContext'
 
 
 function App() {
+  const { session } = useAuth();
+
+  if (!session) {
+    return <Auth />;
+  }
+
   return (
     <Router basename="/pomodoro-frontend">
       <Box>
@@ -20,7 +28,7 @@ function App() {
         <Route path="/report" element={<Report />} />
       </Routes>
     </Router>
-  )
+  );
 }
 
 export default App
