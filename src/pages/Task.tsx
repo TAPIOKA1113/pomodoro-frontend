@@ -34,19 +34,28 @@ function Task() {
 
                     <div
                         className="relative group cursor-pointer"
-                        onClick={() => setSelectedDate(new Date())}
-                        title="クリックで今日の日付に戻ります"
                     >
                         <DatePicker
                             selected={selectedDate}
                             onChange={(date: Date | null) => setSelectedDate(date || new Date())}
-                            // 今日ならyyyy/MM/dd (今日)
                             dateFormat={selectedDate.toDateString() === new Date().toDateString() ? "yyyy/MM/dd (今日)" : "yyyy/MM/dd"}
                             locale="ja"
                             className="w-60 py-3 text-lg font-semibold text-indigo-700 bg-white border-2 border-indigo-300 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent cursor-pointer transition-all duration-300 ease-in-out hover:bg-indigo-50 hover:border-indigo-400 text-center"
                         />
-                        <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-500 pointer-events-none transition-all duration-300 ease-in-out group-hover:text-indigo-600 group-hover:scale-110" />
-                        {/* <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-indigo-500 transition-all duration-300 ease-in-out group-hover:w-full"></div> */}
+                        <div
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedDate(getJapanDate());
+                            }}
+                            className="group/icon"
+                            title="クリックで今日の日付に戻ります"
+                        >
+                            <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-500 pointer-events-auto cursor-pointer transition-all duration-300 ease-in-out group-hover/icon:text-indigo-600 group-hover/icon:scale-110" />
+                            <span className="absolute invisible group-hover/icon:visible whitespace-nowrap bg-indigo-600 text-white text-sm px-2 py-1 rounded-md -top-8 right-0 transform transition-all duration-300 ease-in-out">
+                                今日に戻る
+                                <span className="absolute bottom-0 right-3 transform translate-y-1/2 rotate-45 w-2 h-2 bg-indigo-600"></span>
+                            </span>
+                        </div>
                     </div>
 
                 </div>
