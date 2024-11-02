@@ -5,6 +5,7 @@ import { FiMinus, FiPlus } from 'react-icons/fi';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 interface Pomodolo {
+    id: string;
     title: string;
     setNumber: number;
     currentSets: number;
@@ -22,9 +23,9 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
     const [isOpen, setIsOpen] = useState(false);
     const [pomodolos, setPomodolos] = useLocalStorage<Pomodolo[]>("pomodolos", []);
 
-    const handleMinusPomodolo = (title: string) => {
+    const handleMinusPomodolo = (id: string) => {
         setPomodolos(prev => prev.map(pomodolo => {
-            if (pomodolo.title === title) {
+            if (pomodolo.id === id) {
                 if (pomodolo.setNumber >= pomodolo.currentSets) {
                     // ポイントを減らす
                     onPointsUpdate?.(-1);
@@ -45,9 +46,9 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
         }));
     };
 
-    const handlePlusPomodolo = (title: string) => {
+    const handlePlusPomodolo = (id: string) => {
         setPomodolos(prev => prev.map(pomodolo => {
-            if (pomodolo.title === title) {
+            if (pomodolo.id === id) {
                 if (pomodolo.setNumber > pomodolo.currentSets) {
                     // ポイントを加算
                     onPointsUpdate?.(1);
@@ -105,7 +106,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                                         icon={<FiMinus />}
                                         size="sm"
                                         isDisabled={pomodolo.currentSets <= 0}
-                                        onClick={() => handleMinusPomodolo(pomodolo.title)}
+                                        onClick={() => handleMinusPomodolo(pomodolo.id)}
                                     />
 
                                     <Text fontSize="sm" color={pomodolo.currentSets >= pomodolo.setNumber ? "green.500" : "gray.500"}>
@@ -115,7 +116,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                                     <IconButton
                                         icon={<FiPlus />}
                                         size="sm"
-                                        onClick={() => handlePlusPomodolo(pomodolo.title)}
+                                        onClick={() => handlePlusPomodolo(pomodolo.id)}
                                     />
                                 </HStack>
                             </HStack>

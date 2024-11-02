@@ -18,6 +18,7 @@ import {
 import { Trash2 } from 'lucide-react'
 
 interface Pomodolo {
+    id: string;
     title: string;
     setNumber: number;
     currentSets: number;
@@ -34,7 +35,7 @@ interface PomodoloSettingModalProps {
 
 export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomodolos, selectedDate }: PomodoloSettingModalProps) {
 
-    const [pomodolos, setPomodolos] = useState<Pomodolo[]>([{ title: '', setNumber: 1, currentSets: 0, date: new Date() }]);
+    const [pomodolos, setPomodolos] = useState<Pomodolo[]>([{ id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: new Date() }]);
 
 
     useEffect(() => {
@@ -47,7 +48,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
 
             setPomodolos([
                 ...filteredPomodolos,
-                { title: '', setNumber: 1, currentSets: 0, date: selectedDate }
+                { id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: selectedDate }
             ]);
         }
     }, [isOpen, allPomodolos, selectedDate]);
@@ -72,7 +73,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
     const addNewField = (index: number) => {
         const currentValue = pomodolos[index].title;
         if (currentValue !== '' && index === pomodolos.length - 1) {
-            setPomodolos([...pomodolos, { title: '', setNumber: 1, currentSets: 0, date: selectedDate }]);
+            setPomodolos([...pomodolos, { id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: selectedDate }]);
         }
     };
 
@@ -83,7 +84,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
 
     const handleDelete = (index: number) => {
         if (pomodolos.length === 1) {
-            setPomodolos([{ title: '', setNumber: 1, currentSets: 0, date: new Date() }]);
+            setPomodolos([{ id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: new Date() }]);
             return;
         }
         const newPomodolos = pomodolos.filter((_, i) => i !== index);
@@ -102,6 +103,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
             })
             .map((pomodolo: Pomodolo) => ({
                 ...pomodolo,
+                id: crypto.randomUUID(),
                 date: selectedDate,
                 currentSets: 0
             }));
@@ -109,7 +111,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
 
         setPomodolos([
             ...previousPomodolos,
-            { title: '', setNumber: 1, currentSets: 0, date: selectedDate }
+            { id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: selectedDate }
         ]);
     }
 
