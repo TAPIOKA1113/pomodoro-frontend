@@ -27,6 +27,9 @@ export default function Report() {
     const completedSets = filteredPomodoros.reduce((acc, pomodoro) => acc + pomodoro.currentSets, 0);
     const completionRate = Math.min(totalSets > 0 ? (completedSets / totalSets) * 100 : 0, 100);
 
+    const totalPoints = filteredPomodoros.reduce((acc, pomodoro) => acc + pomodoro.currentSets, 0);
+
+
     return (
         <div className="min-h-screen p-8 bg-gradient-to-br from-purple-100 to-indigo-300">
             <div className="max-w-6xl mx-auto">
@@ -48,12 +51,17 @@ export default function Report() {
                             総完了率: {completionRate.toFixed(1)}%
                             ({completedSets} / {totalSets} セット)
                         </p>
+                        <p className="text-end text-yellow-600 font-semibold">
+                            獲得ポイント: {totalPoints}pt
+                        </p>
+
                         <div className="w-full bg-gray-200 rounded-full h-4">
                             <div
                                 className="bg-blue-600 h-4 rounded-full"
                                 style={{ width: `${completionRate}%` }}
                             ></div>
                         </div>
+
                     </div>
 
                     {filteredPomodoros.length === 0 ? (
