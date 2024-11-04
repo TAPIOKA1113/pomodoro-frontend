@@ -7,7 +7,7 @@ export const fetchPomodolos = async (selectedDate: Date) => {
     if (!session.session?.user) return null;
 
     const { data, error } = await supabase
-        .from('Pomodolos')
+        .from('pomodolos')
         .select('*')
         .eq('user_id', session.session.user.id)
         .eq('date', selectedDate.toISOString().split('T')[0]);
@@ -26,15 +26,16 @@ export const addPomodoloItem = async (title: string, setNumber: number, date: Da
     if (!session.session?.user) return null;
 
     const { data, error } = await supabase
-        .from('Pomodolos')
+        .from('pomodolos')
         .insert([
             {
+                id: crypto.randomUUID(),
                 title,
                 setNumber,
                 currentSets: 0,
                 date,
                 user_id: session.session.user.id,
-                id: crypto.randomUUID()
+
             }
         ])
         .select();
@@ -48,13 +49,13 @@ export const addPomodoloItem = async (title: string, setNumber: number, date: Da
 };
 
 // ポモドーロの更新
-export const updateSetPomodolo = async (id: string, num: number) => {
+export const updatePomodoloCount = async (id: string, num: number) => {
     const { data: session } = await supabase.auth.getSession();
     if (!session.session?.user) return null;
 
     // まず現在のcurrentSetsの値を取得
     const { data: currentData, error: fetchError } = await supabase
-        .from('Pomodolos')
+        .from('pomodolos')
         .select('currentSets')
         .eq('id', id)
         .eq('user_id', session.session.user.id)
@@ -67,7 +68,7 @@ export const updateSetPomodolo = async (id: string, num: number) => {
 
     // currentSetsを更新
     const { data, error } = await supabase
-        .from('Pomodolos')
+        .from('pomodolos')
         .update({ currentSets: (currentData?.currentSets || 0) + num })
         .eq('id', id)
         .eq('user_id', session.session.user.id);
@@ -80,13 +81,69 @@ export const updateSetPomodolo = async (id: string, num: number) => {
     return data;
 };
 
+//  報酬の取得
+export const fetchPomodolos = async (selectedDate: Date) => {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session?.user) return null;
+
+    const { data, error } = await supabase
+        .from('pomodolos')
+        .select('*')
+        .eq('user_id', session.session.user.id)
+        .eq('date', selectedDate.toISOString().split('T')[0]);
+
+    if (error) {
+        console.error('Error fetching pomodolos:', error);
+        return null;
+    }
+
+    return data;
+};
+
+//　総ポイント数の取得
+export const getUserTotalPoints = async () => {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session?.user) return null;
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('total_points')
+        .eq('id', session.session.user.id)
+        .single();
+
+    if (error) {
+        console.error('Error fetching user points:', error);
+        return null;
+    }
+
+    return data?.total_points ?? 0;
+};
+
+//　総ポイント数の更新
+export const updateUserTotalPoints = async (points: number) => {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session?.user) return null;
+
+    const { data, error } = await supabase
+        .from('users')
+        .update({ total_points: points })
+        .eq('id', session.session.user.id);
+
+    if (error) {
+        console.error('Error updating user points:', error);
+        return null;
+    }
+
+    return data;
+};
+
 // ポモドーロの削除
 export const deletePomodoloItem = async (id: string) => {
     const { data: session } = await supabase.auth.getSession();
     if (!session.session?.user) return null;
 
     const { error } = await supabase
-        .from('Pomodolos')
+        .from('pomodolos')
         .delete()
         .eq('id', id)
         .eq('user_id', session.session.user.id);
@@ -108,7 +165,7 @@ export const savePomodolos = async (pomodolos: Pomodolo[]) => {
     }));
 
     const { data, error } = await supabase
-        .from('Pomodolos')
+        .from('pomodolos')
         .upsert(pomodolosWithUserId);
 
     if (error) {

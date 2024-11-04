@@ -4,7 +4,7 @@ import { Button, VStack, Text, HStack, IconButton } from '@yamada-ui/react'
 import { FiMinus, FiPlus } from 'react-icons/fi';
 // import useLocalStorage from '../hooks/useLocalStorage';
 import { Pomodolo } from '../type/pomodolo';
-import { fetchPomodolos, updateSetPomodolo, addPomodoloItem } from '../utils/supabaseFunction';
+import { fetchPomodolos, updatePomodoloCount, addPomodoloItem } from '../utils/supabaseFunction';
 
 
 interface PomodoloListProps {
@@ -28,7 +28,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
 
     const handleMinusPomodolo = (id: string) => {
 
-        updateSetPomodolo(id, -1);
+        updatePomodoloCount(id, -1);
         setPomodolos(prev => prev.map(pomodolo => {
             if (pomodolo.id === id) {
                 if (pomodolo.setNumber >= pomodolo.currentSets) {
@@ -53,7 +53,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
 
     const handlePlusPomodolo = (id: string) => {
 
-        updateSetPomodolo(id, 1);
+        updatePomodoloCount(id, 1);
 
 
         setPomodolos(prev => prev.map(pomodolo => {

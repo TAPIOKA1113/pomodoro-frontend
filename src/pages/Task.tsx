@@ -1,22 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Star } from 'lucide-react';
 import Todo from '../components/TodoList';
 import PomodoloList from '../components/PomodoloList';
 import HabitList from '../components/HabitList';
-import useLocalStorage from '../hooks/useLocalStorage';
 import DatePicker from '../components/Date/DatePicker';
+import { updateUserTotalPoints, getUserTotalPoints } from '../utils/supabaseFunction';
 
 function Task() {
 
     const [selectedDate, setSelectedDate] = useState(new Date());
 
 
-    const [totalPoints, setTotalPoints] = useLocalStorage<number>("totalPoints", 0);
+    const [totalPoints, setTotalPoints] = useState(0);
+
+    //  マウント時に総ポイント数を取得
+    useEffect(() => {
+        const fetchPoints = async () => {
+            const points = await getUserTotalPoints();
+            if (points !== null) {
+                setTotalPoints(points);
+            }
+        };
+        fetchPoints();
+    }, []);
 
 
     const handlePointsUpdate = (points: number) => {
-        setTotalPoints(prev => Math.max(0, prev + points));
+        const newTotalPoints = Math.max(0, totalPoints + points)
+        setTotalPoints(newTotalPoints);
+        updateUserTotalPoints(newTotalPoints)
     };
 
     const handleDateChange = (date: Date | null) => {
@@ -25,8 +38,8 @@ function Task() {
 
 
     return (
-        <div className="flex flex-col min-h-screen p-8 bg-gradient-to-br from-purple-100 to-indigo-300">
-            <div className="relative flex justify-center items-center mb-8">
+        <div className="flex flex-col min-h-screen p-8 bg-gradient-to-br from-purple-100 to-indigo-300 ">
+            <div className="relative flex justify-center items-center mb-8 ">
                 <DatePicker
                     selected={selectedDate}
                     onChange={handleDateChange}
