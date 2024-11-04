@@ -30,7 +30,7 @@ interface PomodoloSettingModalProps {
 
 export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomodolos, selectedDate }: PomodoloSettingModalProps) {
 
-    const [pomodolos, setPomodolos] = useState<Pomodolo[]>([{ id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: new Date() }]);
+    const [pomodolos, setPomodolos] = useState<Pomodolo[]>([{ id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: new Date(), created_at: Date.now() }]);
 
 
     useEffect(() => {
@@ -43,7 +43,9 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
 
             setPomodolos([
                 ...filteredPomodolos,
-                { id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: selectedDate }
+                {
+                    id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: selectedDate, created_at: Date.now()
+                }
             ]);
         }
     }, [isOpen, allPomodolos, selectedDate]);
@@ -68,7 +70,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
     const addNewField = (index: number) => {
         const currentValue = pomodolos[index].title;
         if (currentValue !== '' && index === pomodolos.length - 1) {
-            setPomodolos([...pomodolos, { id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: selectedDate }]);
+            setPomodolos([...pomodolos, { id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: selectedDate, created_at: Date.now() }]);
         }
     };
 
@@ -92,7 +94,8 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
                 title: '',
                 setNumber: 1,
                 currentSets: 0,
-                date: selectedDate
+                date: selectedDate,
+                created_at: Date.now()
             }]);
             return;
         }
@@ -124,7 +127,9 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
 
         setPomodolos([
             ...(previousPomodolos || []),
-            { id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: selectedDate }
+            {
+                id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: selectedDate, created_at: Date.now()
+            }
         ]);
     }
 
@@ -146,41 +151,48 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
                         </Flex>
 
                     )}
-                    {pomodolos.map((pomodolo, index) => (
-                        <HStack key={index} >
-                            <Input
-                                data-index={index}
-                                value={pomodolo.title}
-                                onChange={(e) => handleInputChange(index, e.target.value)}
-                                onBlur={() => handleBlur(index)}
-                                placeholder="新しいポモドーロを追加"
-                                flex={1}
-                            />
-                            {pomodolo.title.trim() !== '' && (
-                                <>
+                    {pomodolos
+                        .sort((a, b) => {
+                            // created_atでソート（昇順）
+                            const aTime = new Date(a.created_at ?? 0).getTime();
+                            const bTime = new Date(b.created_at ?? 0).getTime();
+                            return aTime - bTime;
+                        })
+                        .map((pomodolo, index) => (
+                            <HStack key={index} >
+                                <Input
+                                    data-index={index}
+                                    value={pomodolo.title}
+                                    onChange={(e) => handleInputChange(index, e.target.value)}
+                                    onBlur={() => handleBlur(index)}
+                                    placeholder="新しいポモドーロを追加"
+                                    flex={1}
+                                />
+                                {pomodolo.title.trim() !== '' && (
+                                    <>
 
-                                    <NumberInput
-                                        value={pomodolo.setNumber}
-                                        onChange={(_, value) => handlePointsChange(index, value)}
-                                        min={1}
-                                        max={10}
-                                        w="100px"
-                                        size="md"
-                                    >
-                                    </NumberInput>
+                                        <NumberInput
+                                            value={pomodolo.setNumber}
+                                            onChange={(_, value) => handlePointsChange(index, value)}
+                                            min={1}
+                                            max={10}
+                                            w="100px"
+                                            size="md"
+                                        >
+                                        </NumberInput>
 
-                                    <IconButton
-                                        aria-label="習慣を削除"
-                                        icon={<Trash2 />}
-                                        variant="ghost"
-                                        colorScheme="red"
-                                        size="sm"
-                                        onClick={() => handleDelete(pomodolo.id)}
-                                    />
-                                </>
-                            )}
-                        </HStack>
-                    ))}
+                                        <IconButton
+                                            aria-label="習慣を削除"
+                                            icon={<Trash2 />}
+                                            variant="ghost"
+                                            colorScheme="red"
+                                            size="sm"
+                                            onClick={() => handleDelete(pomodolo.id)}
+                                        />
+                                    </>
+                                )}
+                            </HStack>
+                        ))}
                 </VStack>
             </ModalBody>
             <ModalFooter>

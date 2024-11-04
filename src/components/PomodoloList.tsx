@@ -103,31 +103,39 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                 </div>
                 <div className={`bg-white shadow-md rounded-lg w-[1000px] h-80 p-6`}>
                     <VStack align="stretch">
-                        {pomodolos.filter(pomodolo =>
-                            new Date(pomodolo.date).toDateString() === selectedDate.toDateString()
-                        ).map((pomodolo, index) => (
-                            <HStack key={index} justify="space-between">
-                                <Text>{pomodolo.title}</Text>
-                                <HStack >
-                                    <IconButton
-                                        icon={<FiMinus />}
-                                        size="sm"
-                                        isDisabled={pomodolo.currentSets <= 0}
-                                        onClick={() => handleMinusPomodolo(pomodolo.id)}
-                                    />
+                        {pomodolos
+                            .filter(pomodolo =>
+                                new Date(pomodolo.date).toDateString() === selectedDate.toDateString()
+                            )
+                            .sort((a, b) => {
+                                // created_atでソート（昇順）
+                                const aTime = new Date(a.created_at ?? 0).getTime();
+                                const bTime = new Date(b.created_at ?? 0).getTime();
+                                return aTime - bTime;
+                            })
+                            .map((pomodolo, index) => (
+                                <HStack key={index} justify="space-between">
+                                    <Text>{pomodolo.title}</Text>
+                                    <HStack >
+                                        <IconButton
+                                            icon={<FiMinus />}
+                                            size="sm"
+                                            isDisabled={pomodolo.currentSets <= 0}
+                                            onClick={() => handleMinusPomodolo(pomodolo.id)}
+                                        />
 
-                                    <Text fontSize="sm" color={pomodolo.currentSets >= pomodolo.setNumber ? "green.500" : "gray.500"}>
-                                        {pomodolo.currentSets} / {pomodolo.setNumber} セット
-                                    </Text>
+                                        <Text fontSize="sm" color={pomodolo.currentSets >= pomodolo.setNumber ? "green.500" : "gray.500"}>
+                                            {pomodolo.currentSets} / {pomodolo.setNumber} セット
+                                        </Text>
 
-                                    <IconButton
-                                        icon={<FiPlus />}
-                                        size="sm"
-                                        onClick={() => handlePlusPomodolo(pomodolo.id)}
-                                    />
+                                        <IconButton
+                                            icon={<FiPlus />}
+                                            size="sm"
+                                            onClick={() => handlePlusPomodolo(pomodolo.id)}
+                                        />
+                                    </HStack>
                                 </HStack>
-                            </HStack>
-                        ))}
+                            ))}
                         {pomodolos.length === 0 && (
                             <Text color="gray.500" textAlign="center">
                                 ポモドーロを設定してください

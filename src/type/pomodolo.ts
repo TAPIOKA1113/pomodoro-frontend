@@ -4,4 +4,5 @@ export interface Pomodolo {
     setNumber: number;
     currentSets: number;
     date: Date;
+    created_at?: number;
 }
