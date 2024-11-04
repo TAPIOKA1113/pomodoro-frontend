@@ -49,28 +49,14 @@ export const addPomodoloItem = async (title: string, setNumber: number, date: Da
     return data;
 };
 
-// ポモドーロの更新
+// ポモドーロの完了回数の更新
 export const updatePomodoloCount = async (id: string, num: number) => {
     const { data: session } = await supabase.auth.getSession();
     if (!session.session?.user) return null;
 
-    // まず現在のcurrentSetsの値を取得
-    const { data: currentData, error: fetchError } = await supabase
-        .from('pomodolos')
-        .select('currentSets')
-        .eq('id', id)
-        .eq('user_id', session.session.user.id)
-        .single();
-
-    if (fetchError) {
-        console.error('Error fetching current sets:', fetchError);
-        return null;
-    }
-
-    // currentSetsを更新
     const { data, error } = await supabase
         .from('pomodolos')
-        .update({ currentSets: (currentData?.currentSets || 0) + num })
+        .update({ setNumber: num })
         .eq('id', id)
         .eq('user_id', session.session.user.id);
 
@@ -81,6 +67,7 @@ export const updatePomodoloCount = async (id: string, num: number) => {
 
     return data;
 };
+
 
 //  報酬の取得
 export const getUserRewards = async (): Promise<Reward[]> => {

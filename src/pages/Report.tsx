@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from '../components/Date/DatePicker';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { Habit } from '../type/habit';
+import { fetchPomodolos } from '../utils/supabaseFunction';
+
 interface Pomodolo {
     id: string;
     title: string;
@@ -13,8 +15,16 @@ interface Pomodolo {
 
 export default function Report() {
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [pomodoros] = useLocalStorage<Pomodolo[]>("pomodolos", []);
+    const [pomodoros, setPomodolos] = useState<Pomodolo[]>([]);
     const [habits] = useLocalStorage<Habit[]>("habits", []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await fetchPomodolos(selectedDate);
+            setPomodolos(data || []);
+        };
+        fetchData();
+    }, [selectedDate]);
 
     const handleDateChange = (date: Date | null) => {
         if (date) setSelectedDate(date);

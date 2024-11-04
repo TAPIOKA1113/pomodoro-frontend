@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import PomodoloSettingModal from './Modal/PomodoloSettingModal';
 import { Button, VStack, Text, HStack, IconButton } from '@yamada-ui/react'
 import { FiMinus, FiPlus } from 'react-icons/fi';
-// import useLocalStorage from '../hooks/useLocalStorage';
 import { Pomodolo } from '../type/pomodolo';
 import { fetchPomodolos, updatePomodoloCount, addPomodoloItem } from '../utils/supabaseFunction';
 
@@ -89,7 +88,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
         setPomodolos(updatedPomodolos || []);
         setIsOpen(false);
 
-    };
+    };  
 
     return (
         <>

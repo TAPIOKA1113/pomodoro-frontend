@@ -17,7 +17,7 @@ import {
 } from '@yamada-ui/react'
 import { Trash2 } from 'lucide-react'
 import { Pomodolo } from '../../type/pomodolo';
-import { fetchPomodolos, deletePomodoloItem } from '../../utils/supabaseFunction';
+import { fetchPomodolos, deletePomodoloItem, updatePomodoloCount } from '../../utils/supabaseFunction';
 
 
 interface PomodoloSettingModalProps {
@@ -39,7 +39,6 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
                 const pomodoloDate = new Date(pomodolo.date);
                 return pomodoloDate.toDateString() === selectedDate.toDateString();
             });
-            console.log(filteredPomodolos);
 
             setPomodolos([
                 ...filteredPomodolos,
@@ -59,12 +58,15 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
         }
 
         setPomodolos(newPomodolos);
+        console.log(newPomodolos)
     };
 
-    const handlePointsChange = (index: number, value: number) => {
+    const handlePointsChange = async (index: number, value: number) => {
+
         const newPomodolos = [...pomodolos];
         newPomodolos[index] = { ...newPomodolos[index], setNumber: value };
         setPomodolos(newPomodolos);
+
     };
 
     const addNewField = (index: number) => {
@@ -111,26 +113,35 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
 
         const previousPomodolos = await fetchPomodolos(previousDate);
 
-        // 前日のポモドーロを取得し、新しい日付で複製
-        // const previousPomodolos = allPomodolos
-        //     .filter((pomodolo: Pomodolo) => {
-        //         const pomodoloDate = new Date(pomodolo.date);
-        //         return pomodoloDate.toDateString() === previousDate.toDateString();
-        //     })
-        //     .map((pomodolo: Pomodolo) => ({
-        //         ...pomodolo,
-        //         id: crypto.randomUUID(),
-        //         date: selectedDate,
-        //         currentSets: 0
-        //     }));
-
-
         setPomodolos([
             ...(previousPomodolos || []),
             {
                 id: crypto.randomUUID(), title: '', setNumber: 1, currentSets: 0, date: selectedDate, created_at: Date.now()
             }
         ]);
+    }
+
+    const handleAcceptButton = async () => {
+
+
+        // セット回数が変更されたポモドーロ
+        const updatePomodolos = pomodolos.filter(p =>
+            p.title.trim() !== '' &&
+            allPomodolos.some((existing: Pomodolo) =>
+                existing.id === p.id && existing.setNumber !== p.setNumber
+            )
+        );
+        await Promise.all(updatePomodolos.map(pomodolo =>
+            updatePomodoloCount(pomodolo.id, pomodolo.setNumber)
+        ));
+
+        // 新しく追加されたポモドーロ
+        const newPomodolos = pomodolos.filter(p =>
+            p.title.trim() !== '' &&
+            !allPomodolos.some((existing: Pomodolo) => existing.id === p.id)
+        );
+        onSave(newPomodolos, selectedDate);
+
     }
 
     return (
@@ -207,10 +218,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
                 <Button
                     colorScheme="green"
                     variant="ghost"
-                    onClick={() => {
-                        const validPomodolos = pomodolos.filter(h => h.title.trim() !== '');
-                        onSave(validPomodolos, selectedDate);
-                    }}
+                    onClick={handleAcceptButton}
                 >
                     確定
                 </Button>
