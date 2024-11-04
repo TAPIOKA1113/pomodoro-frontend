@@ -1,50 +1,56 @@
 import { useState, useEffect } from 'react'
 import { UIProvider, Button, Input, Card, Modal, ModalBody, ModalHeader, ModalFooter, useDisclosure, VStack, HStack, Text, Heading, Grid, IconButton } from '@yamada-ui/react'
 import { Plus, Gift, Trash2, Star } from 'lucide-react'
-import useLocalStorage from '../hooks/useLocalStorage';
-
-interface Reward {
-    id: number;
-    name: string;
-    points: number | null;
-}
+import { getUserTotalPoints, getUserRewards, addRewardItem, updateUserTotalPoints, deleteRewardItem } from '../utils/supabaseFunction';
+import { Reward } from '../type/reward';
 
 export default function Component() {
     const [totalPoints, setTotalPoints] = useState<number>(0)
-    const [rewards, setRewards] = useLocalStorage<Reward[]>("rewards", [])
-    const [newReward, setNewReward] = useState<Reward>({ id: 0, name: '', points: null })
+    const [rewards, setRewards] = useState<Reward[]>([])
+    const [newReward, setNewReward] = useState<Reward>({ id: 0, title: '', point: null })
     const { isOpen, onOpen, onClose } = useDisclosure()
 
-    // 初回レンダリング時に保有ポイント、報酬を読み込む
+    // 初期ロード時にポイント、報酬を取得
     useEffect(() => {
-        const storedPoints = localStorage.getItem('totalPoints')
-        if (storedPoints) setTotalPoints(parseFloat(storedPoints))
+        const fetchPoints = async () => {
+            const point = await getUserTotalPoints();
+            if (point !== null) {
+                setTotalPoints(point);
+            }
+        };
+        const fetchRewards = async () => {
+            const rewards = await getUserRewards();
+            if (rewards !== null && rewards !== undefined) {
+                setRewards(rewards)
+                console.log(rewards)
+            }
+        }
+        fetchPoints();
+        fetchRewards();
 
-        const storedRewards = localStorage.getItem('rewards')
-        if (storedRewards) setRewards(JSON.parse(storedRewards))
-    }, [])
+    }, []);
 
-    // 報酬が更新されたらローカルストレージに保存
-    useEffect(() => {
-        localStorage.setItem('rewards', JSON.stringify(rewards))
-    }, [rewards])
 
-    const handleAddReward = () => {
-        if (newReward.name && newReward.points && newReward.points > 0) {
+    const handleAddReward = async () => {
+        if (newReward.title && newReward.point && newReward.point > 0) {
             setRewards([...rewards, { ...newReward, id: Date.now() }])
-            setNewReward({ id: 0, name: '', points: null })
+            setNewReward({ id: 0, title: '', point: null })
+            await addRewardItem(newReward.title, newReward.point)
             onClose()
         }
+
     }
 
-    const handleRedeemReward = (reward: Reward) => {
-        if (reward.points && totalPoints >= reward.points) {
-            setTotalPoints(totalPoints - reward.points)
-            localStorage.setItem('totalPoints', (totalPoints - reward.points).toString())
+    const handleRedeemReward = async (reward: Reward) => {
+        if (reward.point && totalPoints >= reward.point) {
+            const newTotalPoints = totalPoints - reward.point
+            setTotalPoints(newTotalPoints)
+            await updateUserTotalPoints(newTotalPoints)
         }
     }
 
-    const handleDeleteReward = (id: number) => {
+    const handleDeleteReward = async (id: number) => {
+        await deleteRewardItem(id)
         setRewards(rewards.filter(reward => reward.id !== id))
     }
 
@@ -64,13 +70,13 @@ export default function Component() {
                         </Button>
                     </HStack>
                     <Grid gap={6}>
-                        {rewards.sort((a, b) => (a.points || 0) - (b.points || 0)).map((reward) => (
+                        {rewards.sort((a, b) => (a.point || 0) - (b.point || 0)).map((reward) => (
                             <Card key={reward.id} p={6} shadow="md" _hover={{ shadow: "lg" }} transition="box-shadow 0.3s" bg="white/60" backdropFilter="blur(8px)">
                                 <VStack align="stretch" >
-                                    <Heading size="md" color="indigo.600">{reward.name}</Heading>
-                                    <Text color="gray.600">{reward.points} ポイント</Text>
+                                    <Heading size="md" color="indigo.600">{reward.title}</Heading>
+                                    <Text color="gray.600">{reward.point} ポイント</Text>
                                     <HStack justify="space-between">
-                                        <Button disabled={reward.points ? totalPoints < reward.points : false} colorScheme="green" onClick={() => handleRedeemReward(reward)} rightIcon={<Gift />}>
+                                        <Button disabled={reward.point ? totalPoints < reward.point : false} colorScheme="green" onClick={() => handleRedeemReward(reward)} rightIcon={<Gift />}>
                                             使用
                                         </Button>
                                         <IconButton
@@ -93,14 +99,14 @@ export default function Component() {
                         <VStack >
                             <Input
                                 placeholder="内容"
-                                value={newReward.name}
-                                onChange={(e) => setNewReward({ ...newReward, name: e.target.value })}
+                                value={newReward.title}
+                                onChange={(e) => setNewReward({ ...newReward, title: e.target.value })}
                             />
                             <Input
                                 type="number"
                                 placeholder="消費ポイント数"
-                                value={newReward.points || ''}
-                                onChange={(e) => setNewReward({ ...newReward, points: parseInt(e.target.value) })}
+                                value={newReward.point || ''}
+                                onChange={(e) => setNewReward({ ...newReward, point: parseInt(e.target.value) })}
                             />
                         </VStack>
                     </ModalBody>

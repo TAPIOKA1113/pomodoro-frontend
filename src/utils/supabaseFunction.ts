@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { Pomodolo } from '../type/pomodolo';
+import { Reward } from '../type/reward';
 
 // ポモドーロの取得
 export const fetchPomodolos = async (selectedDate: Date) => {
@@ -82,23 +83,66 @@ export const updatePomodoloCount = async (id: string, num: number) => {
 };
 
 //  報酬の取得
-export const fetchPomodolos = async (selectedDate: Date) => {
+export const getUserRewards = async (): Promise<Reward[]> => {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session?.user) return [];
+
+    const { data, error } = await supabase
+        .from('rewards')
+        .select('id, title, point')
+        .eq('user_id', session.session.user.id)
+
+    if (error) {
+        console.error('Error fetching pomodolos:', error);
+        return [];
+        
+    }
+
+    return data;
+};
+
+// 報酬の追加
+export const addRewardItem = async (title: string, point: number) => {
     const { data: session } = await supabase.auth.getSession();
     if (!session.session?.user) return null;
 
     const { data, error } = await supabase
-        .from('pomodolos')
-        .select('*')
-        .eq('user_id', session.session.user.id)
-        .eq('date', selectedDate.toISOString().split('T')[0]);
+        .from('rewards')
+        .insert([
+            {
+                id: crypto.randomUUID(),
+                title,
+                point,
+                user_id: session.session.user.id,
+            }
+        ])
+        .select();
 
     if (error) {
-        console.error('Error fetching pomodolos:', error);
+        console.error('Error adding pomodolo:', error);
         return null;
     }
 
     return data;
 };
+
+// 報酬の削除
+export const deleteRewardItem = async (id: number) => {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session?.user) return null;
+
+    const { error } = await supabase
+        .from('rewards')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', session.session.user.id);
+
+    if (error) {
+        console.error('Error deleting pomodolo:', error);
+        return null;
+    }
+};
+
 
 //　総ポイント数の取得
 export const getUserTotalPoints = async () => {
