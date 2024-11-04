@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Checkbox, VStack, Text, HStack } from '@yamada-ui/react'
 import HabitSettingModal from './Modal/HabitSettingModal'
-import useLocalStorage from '../hooks/useLocalStorage';
+
 import { Habit } from '../type/habit';
+import { fetchHabits } from '../utils/supabaseFunction';
 
 interface HabitListProps {
     children: React.ReactNode;
@@ -13,12 +14,21 @@ interface HabitListProps {
 
 function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [habits, setHabits] = useLocalStorage<Habit[]>("habits", []);
+    const [habits, setHabits] = useState<Habit[]>([])
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await fetchHabits();
+            console.log(selectedDate)
+            setHabits(data || []);
+        };
+        fetchData();
+    }, [selectedDate]);
 
     // 特定の日付の習慣が完了しているかチェック
     const isHabitCompletedForDate = (habit: Habit, date: Date) => {
         const dateStr = date.toISOString().split('T')[0];
-        return habit.completedDates.includes(dateStr);
+        return habit.completed_dates.includes(dateStr);
     };
 
 
@@ -28,16 +38,16 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
         setHabits(prev => prev.map(habit => {
             if (habit.title === title) {
                 const isCurrentlyCompleted = isHabitCompletedForDate(habit, date);
-                const newCompletedDates = isCurrentlyCompleted
-                    ? habit.completedDates.filter(d => d !== dateStr)
-                    : [...habit.completedDates, dateStr];
+                const newcompleted_dates = isCurrentlyCompleted
+                    ? habit.completed_dates.filter(d => d !== dateStr)
+                    : [...habit.completed_dates, dateStr];
 
                 // ポイントの更新
                 onPointsUpdate?.(isCurrentlyCompleted ? -habit.points : habit.points);
 
                 return {
                     ...habit,
-                    completedDates: newCompletedDates
+                    completed_dates: newcompleted_dates
                 };
             }
             return habit;

@@ -239,3 +239,53 @@ export const savePomodolos = async (pomodolos: Pomodolo[]) => {
 
     return data;
 };
+
+
+// 習慣の取得
+export const fetchHabits = async () => {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session?.user) return null;
+
+    const { data, error } = await supabase
+        .from('habits')
+        .select('id, title, points, completed_dates')
+        .eq('user_id', session.session.user.id)
+
+    if (error) {
+        console.error('Error fetching pomodolos:', error);
+        return null;
+    }
+
+    console.log(data)
+
+    return data;
+};
+
+
+// 習慣の追加
+export const addHabitItem = async (title: string, points: number, completed_date: Date) => {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session?.user) return null;
+
+    const { data, error } = await supabase
+        .from('habits')
+        .insert([
+            {
+                id: crypto.randomUUID(),
+                title,
+                points,
+                completed_date,
+                user_id: session.session.user.id,
+            }
+        ])
+        .select();
+
+    if (error) {
+        console.error('Error adding pomodolo:', error);
+        return null;
+    }
+
+    return data;
+};
+
+// 習慣を達成した日の更新

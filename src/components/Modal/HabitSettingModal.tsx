@@ -28,12 +28,12 @@ interface HabitSettingModalProps {
 
 export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabits }: HabitSettingModalProps) {
 
-    const [habits, setHabits] = useState<Habit[]>([{ title: '', points: 1, isCompleted: false, completedDates: [] }]);
+    const [habits, setHabits] = useState<Habit[]>([{ id: crypto.randomUUID(), title: '', points: 1, completed_dates: [] }]);
 
 
     useEffect(() => {
         if (isOpen) {
-            setHabits([...initialHabits, { title: '', points: 1, isCompleted: false, completedDates: [] }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
+            setHabits([...initialHabits, { id: crypto.randomUUID(), title: '', points: 1, completed_dates: [] }]); // 既に存在する習慣に、空の習慣を追加することでテキストボックスを表示
         }
     }, [isOpen, initialHabits]);
 
@@ -57,7 +57,7 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
     const addNewField = (index: number) => {
         const currentValue = habits[index].title;
         if (currentValue !== '' && index === habits.length - 1) {
-            setHabits([...habits, { title: '', points: 1, isCompleted: false, completedDates: [] }]);
+            setHabits([...habits, { id: crypto.randomUUID(), title: '', points: 1, completed_dates: [] }]);
         }
     };
 
@@ -68,7 +68,7 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
 
     const handleDelete = (index: number) => {
         if (habits.length === 1) {
-            setHabits([{ title: '', points: 1, isCompleted: false, completedDates: [] }]);
+            setHabits([{ id: crypto.randomUUID(), title: '', points: 1, completed_dates: [] }]);
             return;
         }
         const newHabits = habits.filter((_, i) => i !== index);

@@ -40,7 +40,7 @@ export default function Report() {
     const completedSets = filteredPomodoros.reduce((acc, pomodoro) => acc + pomodoro.currentSets, 0);
     const completionRate = Math.min(totalSets > 0 ? (completedSets / totalSets) * 100 : 0, 100);
 
-    const totalPoints = filteredPomodoros.reduce((acc, pomodoro) => acc + pomodoro.currentSets, 0) + habits.filter(habit => habit.completedDates.includes(selectedDate.toISOString().split('T')[0])).reduce((acc, habit) => acc + habit.points, 0);
+    const totalPoints = filteredPomodoros.reduce((acc, pomodoro) => acc + pomodoro.currentSets, 0) + habits.filter(habit => habit.completed_dates.includes(selectedDate.toISOString().split('T')[0])).reduce((acc, habit) => acc + habit.points, 0);
 
 
     return (
@@ -117,7 +117,7 @@ export default function Report() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {habits.map((habit) => (
                                 <div key={habit.title}
-                                    className={`p-4 rounded-md shadow transition-all duration-200 ${habit.completedDates.includes(selectedDate.toISOString().split('T')[0]) ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 border-2 border-gray-200'}`}
+                                    className={`p-4 rounded-md shadow transition-all duration-200 ${habit.completed_dates.includes(selectedDate.toISOString().split('T')[0]) ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 border-2 border-gray-200'}`}
                                 >
                                     <div className="flex items-center justify-between">
                                         <h3 className="font-semibold">{habit.title}</h3>

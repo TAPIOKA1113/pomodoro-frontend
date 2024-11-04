@@ -1,6 +1,6 @@
 export interface Habit {
+    id: string,
     title: string;
     points: number;
-    isCompleted: boolean;
-    completedDates: string[];
+    completed_dates: string[];
 }
