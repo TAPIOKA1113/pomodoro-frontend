@@ -17,7 +17,7 @@ import {
 } from '@yamada-ui/react'
 import { Trash2 } from 'lucide-react'
 import { Pomodolo } from '../../type/pomodolo';
-import { fetchPomodolos, deletePomodoloItem, updatePomodoloCount } from '../../utils/supabaseFunction';
+import { fetchPomodolos, deletePomodoloItem, updatePomodoloSets } from '../../utils/supabaseFunction';
 
 
 interface PomodoloSettingModalProps {
@@ -132,7 +132,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
             )
         );
         await Promise.all(updatePomodolos.map(pomodolo =>
-            updatePomodoloCount(pomodolo.id, pomodolo.setNumber)
+            updatePomodoloSets(pomodolo.id, pomodolo.setNumber)
         ));
 
         // 新しく追加されたポモドーロ

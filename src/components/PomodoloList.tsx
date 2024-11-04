@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PomodoloSettingModal from './Modal/PomodoloSettingModal';
 import { Button, VStack, Text, HStack, IconButton } from '@yamada-ui/react'
-import { FiMinus, FiPlus } from 'react-icons/fi';
+import { FiMinus, FiPlus, FiStar } from 'react-icons/fi';
 import { Pomodolo } from '../type/pomodolo';
 import { fetchPomodolos, updatePomodoloCount, addPomodoloItem } from '../utils/supabaseFunction';
 
@@ -88,7 +88,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
         setPomodolos(updatedPomodolos || []);
         setIsOpen(false);
 
-    };  
+    };
 
     return (
         <>
@@ -128,7 +128,8 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                                         </Text>
 
                                         <IconButton
-                                            icon={<FiPlus />}
+                                            icon={pomodolo.currentSets >= pomodolo.setNumber ? <FiStar /> : <FiPlus/>}
+                                            color={pomodolo.currentSets >= pomodolo.setNumber ? "gold" : undefined}
                                             size="sm"
                                             onClick={() => handlePlusPomodolo(pomodolo.id)}
                                         />
