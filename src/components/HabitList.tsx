@@ -3,7 +3,7 @@ import { Button, Checkbox, VStack, Text, HStack } from '@yamada-ui/react'
 import HabitSettingModal from './Modal/HabitSettingModal'
 
 import { Habit } from '../type/habit';
-import { addHabitItem, fetchHabits } from '../utils/supabaseFunction';
+import { addHabitItem, fetchHabits, updateCompleteDateHabits } from '../utils/supabaseFunction';
 
 interface HabitListProps {
     children: React.ReactNode;
@@ -19,7 +19,6 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
     useEffect(() => {
         const fetchData = async () => {
             const data = await fetchHabits();
-            console.log(selectedDate)
             setHabits(data || []);
         };
         fetchData();
@@ -27,6 +26,7 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
 
     // 特定の日付の習慣が完了しているかチェック
     const isHabitCompletedForDate = (habit: Habit, date: Date) => {
+        if (habit.completed_dates === null) return false
         const dateStr = date.toISOString().split('T')[0];
         return habit.completed_dates?.includes(dateStr);
     };
@@ -44,6 +44,9 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
 
                 // ポイントの更新
                 onPointsUpdate?.(isCurrentlyCompleted ? -habit.points : habit.points);
+                console.log(newcompleted_dates)
+
+                updateCompleteDateHabits(habit.id, newcompleted_dates)
 
                 return {
                     ...habit,
@@ -76,7 +79,7 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
                         <Button onClick={() => setIsOpen(true)}>設定</Button>
                     </div>
                 </div>
-                <div className={`bg-white shadow-md rounded-lg w-[500px] h-80 p-6`}>
+                <div className={`bg-white shadow-md rounded-lg w-[500px] h-80 p-6 overflow-auto`}>
                     <VStack align="stretch">
                         {habits.map((habit, index) => (
                             <HStack key={index} justify="space-between" p="2" _hover={{ bg: "gray.50" }} rounded="md">
