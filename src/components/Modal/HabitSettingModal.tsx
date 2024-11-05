@@ -75,6 +75,17 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
         setHabits(newHabits);
     };
 
+    const handleAcceptButton = async () => {
+
+        // 新しく追加されたポモドーロ
+        const newHabits = habits.filter(p =>
+            p.title.trim() !== '' &&
+            !initialHabits.some((existing: Habit) => existing.id === p.id)
+        );
+        onSave(newHabits);
+
+    }
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} size='3xl'>
             <ModalOverlay />
@@ -140,10 +151,7 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
                 <Button
                     colorScheme="green"
                     variant="ghost"
-                    onClick={() => {
-                        const validHabits = habits.filter(h => h.title.trim() !== '');
-                        onSave(validHabits);
-                    }}
+                    onClick={handleAcceptButton}
                 >
                     確定
                 </Button>

@@ -3,7 +3,7 @@ import { Button, Checkbox, VStack, Text, HStack } from '@yamada-ui/react'
 import HabitSettingModal from './Modal/HabitSettingModal'
 
 import { Habit } from '../type/habit';
-import { fetchHabits } from '../utils/supabaseFunction';
+import { addHabitItem, fetchHabits } from '../utils/supabaseFunction';
 
 interface HabitListProps {
     children: React.ReactNode;
@@ -28,19 +28,19 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
     // 特定の日付の習慣が完了しているかチェック
     const isHabitCompletedForDate = (habit: Habit, date: Date) => {
         const dateStr = date.toISOString().split('T')[0];
-        return habit.completed_dates.includes(dateStr);
+        return habit.completed_dates?.includes(dateStr);
     };
 
 
-    const handleHabitComplete = (title: string, date: Date) => {
+    const handleHabitComplete = (id: string, date: Date) => {
         const dateStr = date.toISOString().split('T')[0]; // DatePickerで選択した日付　
 
         setHabits(prev => prev.map(habit => {
-            if (habit.title === title) {
+            if (habit.id === id) {
                 const isCurrentlyCompleted = isHabitCompletedForDate(habit, date);
                 const newcompleted_dates = isCurrentlyCompleted
-                    ? habit.completed_dates.filter(d => d !== dateStr)
-                    : [...habit.completed_dates, dateStr];
+                    ? (habit.completed_dates ?? []).filter(d => d !== dateStr)
+                    : [...(habit.completed_dates ?? []), dateStr];
 
                 // ポイントの更新
                 onPointsUpdate?.(isCurrentlyCompleted ? -habit.points : habit.points);
@@ -55,7 +55,13 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
     };
 
 
-    const handleSaveHabits = (newHabits: Habit[]) => {
+    const handleSaveHabits = async (newHabits: Habit[]) => {
+
+        // すべてのポモドーロの追加を待つ
+        await Promise.all(newHabits.map(habit =>
+            addHabitItem(habit.id, habit.title, habit.points)
+        ));
+
         setHabits(newHabits);
         setIsOpen(false);
     };
@@ -76,7 +82,7 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
                             <HStack key={index} justify="space-between" p="2" _hover={{ bg: "gray.50" }} rounded="md">
                                 <Checkbox
                                     isChecked={isHabitCompletedForDate(habit, selectedDate)}
-                                    onChange={() => handleHabitComplete(habit.title, selectedDate)}
+                                    onChange={() => handleHabitComplete(habit.id, selectedDate)}
                                     colorScheme="primary"
                                     size="lg"
                                     _checked={{
@@ -112,7 +118,7 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
                 onClose={() => setIsOpen(false)}
                 onSave={handleSaveHabits}
                 initialHabits={habits}
-                
+
             />
         </>
     );

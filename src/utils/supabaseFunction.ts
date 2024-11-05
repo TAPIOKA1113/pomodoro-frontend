@@ -263,7 +263,7 @@ export const fetchHabits = async () => {
 
 
 // 習慣の追加
-export const addHabitItem = async (title: string, points: number, completed_date: Date) => {
+export const addHabitItem = async (id: string, title: string, points: number) => {
     const { data: session } = await supabase.auth.getSession();
     if (!session.session?.user) return null;
 
@@ -271,10 +271,9 @@ export const addHabitItem = async (title: string, points: number, completed_date
         .from('habits')
         .insert([
             {
-                id: crypto.randomUUID(),
+                id,
                 title,
                 points,
-                completed_date,
                 user_id: session.session.user.id,
             }
         ])

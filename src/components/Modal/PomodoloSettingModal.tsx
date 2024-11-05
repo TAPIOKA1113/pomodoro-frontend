@@ -17,7 +17,7 @@ import {
 } from '@yamada-ui/react'
 import { Trash2 } from 'lucide-react'
 import { Pomodolo } from '../../type/pomodolo';
-import { fetchPomodolos, deletePomodoloItem, updatePomodoloSets } from '../../utils/supabaseFunction';
+import { fetchPomodolos, deletePomodoloItem,  updatePomodoloSets } from '../../utils/supabaseFunction';
 
 
 interface PomodoloSettingModalProps {
@@ -147,7 +147,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
     return (
         <Modal isOpen={isOpen} onClose={onClose} size='3xl'>
             <ModalOverlay />
-            <ModalHeader>ポモドーロの設定
+            <ModalHeader>ポモドーロの設定  
                 <Button onClick={() => handleCopyButton(selectedDate)}>前日の内容をコピー</Button>
             </ModalHeader>
             <ModalCloseButton />
@@ -158,9 +158,8 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
                         <Flex justify="end" fontSize="md" color="gray.500">
                             <Text px="16">
                                 セット数
-                            </Text>
+                            </Text>     
                         </Flex>
-
                     )}
                     {pomodolos
                         .sort((a, b) => {

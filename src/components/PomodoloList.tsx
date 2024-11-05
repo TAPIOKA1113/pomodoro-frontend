@@ -100,7 +100,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                         <Button onClick={() => setIsOpen(true)}>設定</Button>
                     </div>
                 </div>
-                <div className={`bg-white shadow-md rounded-lg w-[1000px] h-80 p-6`}>
+                <div className={`bg-white shadow-md rounded-lg w-[1000px] h-80 p-6 overflow-auto`}>
                     <VStack align="stretch">
                         {pomodolos
                             .filter(pomodolo =>
