@@ -141,6 +141,7 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
             !allPomodolos.some((existing: Pomodolo) => existing.id === p.id)
         );
         onSave(newPomodolos, selectedDate);
+        console.log(newPomodolos)
 
     }
 

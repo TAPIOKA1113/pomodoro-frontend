@@ -27,9 +27,13 @@ export const fetchPomodolos = async (selectedDate: Date) => {
 };
 
 // ポモドーロの追加
-export const addPomodoloItem = async (title: string, setNumber: number, date: Date) => {
+export const addPomodoloItem = async (title: string, setNumber: number, selectedDate: Date) => {
     const { data: session } = await supabase.auth.getSession();
     if (!session.session?.user) return null;
+
+    const dateString = new Date(
+        selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000)
+    ).toISOString().split('T')[0];
 
     const { data, error } = await supabase
         .from('pomodolos')
@@ -39,7 +43,7 @@ export const addPomodoloItem = async (title: string, setNumber: number, date: Da
                 title,
                 setNumber,
                 currentSets: 0,
-                date,
+                date: dateString,
                 user_id: session.session.user.id,
 
             }
