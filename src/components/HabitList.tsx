@@ -3,7 +3,7 @@ import { Button, Checkbox, VStack, Text, HStack } from '@yamada-ui/react'
 import HabitSettingModal from './Modal/HabitSettingModal'
 
 import { Habit } from '../type/habit';
-import { addHabitItem, fetchHabits, updateCompleteDateHabits } from '../utils/supabaseFunction';
+import { addHabitItem, fetchHabits, updateCompleteDateHabit } from '../utils/supabaseFunction';
 
 interface HabitListProps {
     children: React.ReactNode;
@@ -46,7 +46,7 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
                 onPointsUpdate?.(isCurrentlyCompleted ? -habit.points : habit.points);
                 console.log(newcompleted_dates)
 
-                updateCompleteDateHabits(habit.id, newcompleted_dates)
+                updateCompleteDateHabit(habit.id, newcompleted_dates)
 
                 return {
                     ...habit,
@@ -65,7 +65,10 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
             addHabitItem(habit.id, habit.title, habit.points)
         ));
 
-        setHabits(newHabits);
+        // データベースから最新のデータを取得
+        const latestHabits = await fetchHabits();
+
+        setHabits(latestHabits || []);
         setIsOpen(false);
     };
 

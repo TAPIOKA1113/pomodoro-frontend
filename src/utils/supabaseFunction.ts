@@ -288,13 +288,33 @@ export const addHabitItem = async (id: string, title: string, points: number) =>
 };
 
 // 習慣を達成した日の更新
-export const updateCompleteDateHabits = async (id: string, newCompletedDate: string[]) => {
+export const updateCompleteDateHabit = async (id: string, newCompletedDate: string[]) => {
     const { data: session } = await supabase.auth.getSession();
     if (!session.session?.user) return null;
 
     const { data, error } = await supabase
         .from('habits')
         .update({ completed_dates: newCompletedDate })
+        .eq('id', id)
+        .eq('user_id', session.session.user.id);
+
+    if (error) {
+        console.error('Error updating pomodolo:', error);
+        return null;
+    }
+
+    return data;
+
+}
+
+// 習慣を達成した日の更新
+export const updatePointsHabit = async (id: string, points: number) => {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session?.user) return null;
+
+    const { data, error } = await supabase
+        .from('habits')
+        .update({ points: points })
         .eq('id', id)
         .eq('user_id', session.session.user.id);
 

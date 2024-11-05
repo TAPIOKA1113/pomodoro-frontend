@@ -17,7 +17,7 @@ import {
 } from '@yamada-ui/react'
 import { Trash2 } from 'lucide-react'
 import { Habit } from '../../type/habit';
-import { deleteHabitItem } from '../../utils/supabaseFunction';
+import { deleteHabitItem, updatePointsHabit } from '../../utils/supabaseFunction';
 
 
 interface HabitSettingModalProps {
@@ -80,6 +80,17 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
     };
 
     const handleAcceptButton = async () => {
+
+        // 獲得できるポイントが変更された習慣
+        const updateHabits= habits.filter(p =>
+            p.title.trim() !== '' &&
+            initialHabits.some((existing: Habit) =>
+                existing.id === p.id && existing.points !== p.points
+            )
+        );
+        await Promise.all(updateHabits.map(habit =>
+            updatePointsHabit(habit.id, habit.points)
+        ));
 
         // 新しく追加された習慣
         const newHabits = habits.filter(p =>
