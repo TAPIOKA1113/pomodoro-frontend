@@ -17,6 +17,7 @@ import {
 } from '@yamada-ui/react'
 import { Trash2 } from 'lucide-react'
 import { Habit } from '../../type/habit';
+import { deleteHabitItem } from '../../utils/supabaseFunction';
 
 
 interface HabitSettingModalProps {
@@ -66,18 +67,21 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
     };
 
 
-    const handleDelete = (index: number) => {
+    const handleDelete = (id: string) => {
+
+        deleteHabitItem(id)
+
         if (habits.length === 1) {
             setHabits([{ id: crypto.randomUUID(), title: '', points: 1, completed_dates: [] }]);
             return;
         }
-        const newHabits = habits.filter((_, i) => i !== index);
+        const newHabits = habits.filter(habit => habit.id !== id);
         setHabits(newHabits);
     };
 
     const handleAcceptButton = async () => {
 
-        // 新しく追加されたポモドーロ
+        // 新しく追加された習慣
         const newHabits = habits.filter(p =>
             p.title.trim() !== '' &&
             !initialHabits.some((existing: Habit) => existing.id === p.id)
@@ -131,7 +135,7 @@ export default function HabitSettingModal({ isOpen, onClose, onSave, initialHabi
                                         variant="ghost"
                                         colorScheme="red"
                                         size="sm"
-                                        onClick={() => handleDelete(index)}
+                                        onClick={() => handleDelete(habit.id)}
                                     />
                                 </>
                             )}

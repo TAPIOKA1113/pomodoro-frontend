@@ -288,3 +288,22 @@ export const addHabitItem = async (id: string, title: string, points: number) =>
 };
 
 // 習慣を達成した日の更新
+
+
+
+// 習慣の削除
+export const deleteHabitItem = async (id: string) => {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session?.user) return null;
+
+    const { error } = await supabase
+        .from('habits')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', session.session.user.id);
+
+    if (error) {
+        console.error('Error deleting pomodolo:', error);
+        return null;
+    }
+};
