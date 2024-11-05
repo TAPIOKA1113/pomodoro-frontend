@@ -7,16 +7,21 @@ export const fetchPomodolos = async (selectedDate: Date) => {
     const { data: session } = await supabase.auth.getSession();
     if (!session.session?.user) return null;
 
+    const dateString = new Date(
+        selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000)
+    ).toISOString().split('T')[0];
+
     const { data, error } = await supabase
         .from('pomodolos')
         .select('*')
         .eq('user_id', session.session.user.id)
-        .eq('date', selectedDate.toISOString().split('T')[0]);
+        .eq('date', dateString);
 
     if (error) {
         console.error('Error fetching pomodolos:', error);
         return null;
     }
+    console.log(selectedDate)
 
     return data;
 };

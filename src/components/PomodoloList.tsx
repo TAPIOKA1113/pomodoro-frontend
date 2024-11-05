@@ -20,6 +20,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
     useEffect(() => {
         const fetchData = async () => {
             const data = await fetchPomodolos(selectedDate);
+            console.log(selectedDate)
             setPomodolos(data || []);
         };
         fetchData();
@@ -103,9 +104,6 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                 <div className={`bg-white shadow-md rounded-lg w-[1000px] h-80 p-6 overflow-auto`}>
                     <VStack align="stretch">
                         {pomodolos
-                            .filter(pomodolo =>
-                                new Date(pomodolo.date).toDateString() === selectedDate.toDateString()
-                            )
                             .sort((a, b) => {
                                 // created_atでソート（昇順）
                                 const aTime = new Date(a.created_at ?? 0).getTime();
@@ -128,7 +126,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                                         </Text>
 
                                         <IconButton
-                                            icon={pomodolo.currentSets >= pomodolo.setNumber ? <FiStar /> : <FiPlus/>}
+                                            icon={pomodolo.currentSets >= pomodolo.setNumber ? <FiStar /> : <FiPlus />}
                                             color={pomodolo.currentSets >= pomodolo.setNumber ? "gold" : undefined}
                                             size="sm"
                                             onClick={() => handlePlusPomodolo(pomodolo.id)}
