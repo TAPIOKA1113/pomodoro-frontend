@@ -7,7 +7,20 @@
   <link href="/dist/output.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pomodoro</title>
-  <script type="module" crossorigin src="/pomodoro-frontend/assets/index-cON-sVy6.js"></script>
+
+  <script>
+    (function () {
+      const path = localStorage.getItem('path');
+      if (path) {
+        localStorage.removeItem('path');
+        if (path !== '/pomodoro-frontend/') {
+          window.location.href = path;
+        }
+      }
+    })();
+  </script>
+
+  <script type="module" crossorigin src="/pomodoro-frontend/assets/index-DPdl3nJ0.js"></script>
   <link rel="stylesheet" crossorigin href="/pomodoro-frontend/assets/index-r0jYrHOD.css">
 </head>
 
