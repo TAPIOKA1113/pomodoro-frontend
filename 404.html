@@ -5,7 +5,11 @@
     <meta charset="utf-8">
     <title>Redirecting...</title>
     <script>
-        window.location.pathname = '/pomodolo-frontend/'
+        const segment = 1;
+        const path = window.location.pathname;
+        const redirectPath = path.split('/').slice(segment + 1).join('/');
+        localStorage.setItem('path', redirectPath);
+        window.location.replace('/pomodoro-frontend');
     </script>
 </head>
 

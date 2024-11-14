@@ -10,11 +10,12 @@
 
   <script>
     (function () {
-      const path = localStorage.getItem('path');
-      if (path) {
+      const redirectPath = localStorage.getItem('path');
+      if (redirectPath) {
         localStorage.removeItem('path');
-        if (path !== '/pomodoro-frontend/') {
-          window.location.href = path;
+        const fullPath = '/pomodoro-frontend/' + redirectPath;
+        if (window.location.pathname !== fullPath) {
+          window.history.replaceState(null, null, fullPath);
         }
       }
     })();
