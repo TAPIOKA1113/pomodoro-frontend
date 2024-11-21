@@ -123,7 +123,6 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
 
     const handleAcceptButton = async () => {
 
-
         // セット回数が変更されたポモドーロ
         const updatePomodolos = pomodolos.filter(p =>
             p.title.trim() !== '' &&

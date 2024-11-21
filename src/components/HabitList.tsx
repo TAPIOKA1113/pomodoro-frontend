@@ -27,13 +27,16 @@ function HabitList({ children, onPointsUpdate, selectedDate }: HabitListProps) {
     // 特定の日付の習慣が完了しているかチェック
     const isHabitCompletedForDate = (habit: Habit, date: Date) => {
         if (habit.completed_dates === null) return false
-        const dateStr = date.toISOString().split('T')[0];
+        const jstDate = new Date(date.getTime() + (9 * 60 * 60 * 1000)); // UTC+9の調整
+        const dateStr = jstDate.toISOString().split('T')[0];
+
         return habit.completed_dates?.includes(dateStr);
     };
 
 
     const handleHabitComplete = (id: string, date: Date) => {
-        const dateStr = date.toISOString().split('T')[0]; // DatePickerで選択した日付　
+        const jstDate = new Date(date.getTime() + (9 * 60 * 60 * 1000)); // UTC+9の調整
+        const dateStr = jstDate.toISOString().split('T')[0];
 
         setHabits(prev => prev.map(habit => {
             if (habit.id === id) {

@@ -17,7 +17,8 @@ function App() {
   }
 
   return (
-    <Router basename="/pomodoro-frontend">
+
+    <Router basename='/pomodoro-frontend'>
       <Box>
         <Sidebar />
       </Box>
@@ -28,6 +29,7 @@ function App() {
         <Route path="/report" element={<Report />} />
       </Routes>
     </Router>
+
   );
 }
 

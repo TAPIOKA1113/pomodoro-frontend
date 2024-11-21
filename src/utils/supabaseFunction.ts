@@ -300,6 +300,7 @@ export const addHabitItem = async (id: string, title: string, points: number) =>
 export const updateCompleteDateHabit = async (id: string, newCompletedDate: string[]) => {
     const { data: session } = await supabase.auth.getSession();
     if (!session.session?.user) return null;
+    
 
     const { data, error } = await supabase
         .from('habits')

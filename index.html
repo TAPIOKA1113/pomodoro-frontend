@@ -7,6 +7,20 @@
   <link href="/dist/output.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pomodoro</title>
+
+  <script>
+    (function () {
+      const redirectPath = localStorage.getItem('path');
+      if (redirectPath) {
+        localStorage.removeItem('path');
+        const fullPath = '/pomodoro-frontend/' + redirectPath;
+        if (window.location.pathname !== fullPath) {
+          window.history.replaceState(null, null, fullPath);
+        }
+      }
+    })();
+  </script>
+
 </head>
 
 <body>
