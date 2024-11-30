@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Text, VStack, CircleProgress, CircleProgressLabel, Button, Modal } from '@yamada-ui/react'
+import {
+    Box, Text, VStack, CircleProgress, CircleProgressLabel, Button, Modal, ModalBody,
+    ModalCloseButton,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Flex
+} from '@yamada-ui/react'
 
 interface CountdownTimerProps {
     isOpen: boolean;
@@ -8,7 +15,7 @@ interface CountdownTimerProps {
     initialTime: number // 初期時間（秒）
 }
 
-const CountdownTimerModal: React.FC<CountdownTimerProps> = ({ isOpen, initialTime }) => {
+const CountdownTimerModal: React.FC<CountdownTimerProps> = ({ isOpen, onClose, onSave, initialTime }) => {
     const [timeLeft, setTimeLeft] = useState(initialTime)
     const [isActive, setIsActive] = useState(false)
 
@@ -40,26 +47,35 @@ const CountdownTimerModal: React.FC<CountdownTimerProps> = ({ isOpen, initialTim
     const progress = (timeLeft / initialTime) * 100
 
     return (
-        <Modal isOpen={isOpen}>
-            <VStack >
-                <Box position="relative" width="200px" height="200px">
-                    <CircleProgress
-                        value={progress}
-                        size="200px"
-                        thickness="4px"
-                        color="primary"
-                    >
-                        <CircleProgressLabel>
-                            <Text fontSize="3xl" fontWeight="bold">
-                                {timeLeft}s
-                            </Text>
-                        </CircleProgressLabel>                </CircleProgress>
-                </Box>
-                <Button onClick={toggleTimer}>
-                    {isActive ? 'Pause' : 'Start'}
-                </Button>
-                <Button onClick={resetTimer}>Reset</Button>
-            </VStack>
+        <Modal isOpen={isOpen} onClose={onClose} size='3xl'>
+            <ModalOverlay />
+            <ModalHeader>タイマーの開始 </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+                <VStack >
+                    <Flex justify='center'>
+                        <Box position="relative" width="200px" height="200px">
+                            <CircleProgress
+                                value={progress}
+                                size="200px"
+                                thickness="4px"
+                                color="primary"
+                            >
+                                <CircleProgressLabel>
+                                    <Text fontSize="3xl" fontWeight="bold">
+                                        {timeLeft}s
+                                    </Text>
+                                </CircleProgressLabel>                </CircleProgress>
+                        </Box>
+                    </Flex>
+                    <ModalFooter>
+                        <Button onClick={toggleTimer}>
+                            {isActive ? '一時停止' : '開始'}
+                        </Button>
+                        <Button onClick={resetTimer}>リセット</Button>
+                    </ModalFooter>
+                </VStack>
+            </ModalBody>
         </Modal>
     )
 }
