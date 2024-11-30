@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PomodoloSettingModal from './Modal/PomodoloSettingModal';
+import CountdownTimerModal from './Modal/CountdownTimerModal';
 import { Button, VStack, Text, HStack, IconButton } from '@yamada-ui/react'
 import { FiMinus, FiPlus, FiStar } from 'react-icons/fi';
 import { Pomodolo } from '../type/pomodolo';
@@ -14,7 +15,8 @@ interface PomodoloListProps {
 }
 
 function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListProps) {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
+    const [isTimerModalOpen, setIsTimerModalOpen] = useState(false);
     const [pomodolos, setPomodolos] = useState<Pomodolo[]>([]);
 
     useEffect(() => {
@@ -87,9 +89,10 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
         // データベースから最新のデータを取得
         const updatedPomodolos = await fetchPomodolos(selectedDate);
         setPomodolos(updatedPomodolos || []);
-        setIsOpen(false);
+        setIsSettingModalOpen(false);
 
     };
+
 
     return (
         <>
@@ -98,7 +101,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                     <div className="flex-1" />
                     <h2 className="text-xl font-semibold text-indigo-800">{children}</h2>
                     <div className="flex-1 flex justify-end">
-                        <Button onClick={() => setIsOpen(true)}>設定</Button>
+                        <Button onClick={() => setIsSettingModalOpen(true)}>設定</Button>
                     </div>
                 </div>
                 <div className={`bg-white shadow-md rounded-lg w-[1000px] h-80 p-6 overflow-auto`}>
@@ -112,7 +115,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                             })
                             .map((pomodolo, index) => (
                                 <HStack key={index} justify="space-between">
-                                    <Text>{pomodolo.title}</Text>
+                                    <Text onClick={() => setIsTimerModalOpen(true)}>{pomodolo.title}</Text>
                                     <HStack >
                                         <IconButton
                                             icon={<FiMinus />}
@@ -157,12 +160,19 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                 </div>
             </div>
             <PomodoloSettingModal
-                isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
+                isOpen={isSettingModalOpen}
+                onClose={() => setIsSettingModalOpen(false)}
                 onSave={handleSavePomodolo}
                 allPomodolos={pomodolos}
                 selectedDate={selectedDate}
             />
+
+            <CountdownTimerModal
+                isOpen={isTimerModalOpen}
+                onClose={() => setIsTimerModalOpen(false)}
+                onSave={handleSavePomodolo}
+                initialTime={60}
+            ></CountdownTimerModal>
         </>
     );
 }

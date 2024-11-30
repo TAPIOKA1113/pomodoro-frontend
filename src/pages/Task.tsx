@@ -47,6 +47,7 @@ function Task() {
                 />
 
 
+
                 <div className="absolute right-0 bg-white rounded-full shadow-lg px-6 py-3 flex items-center space-x-2">
                     <Star className="text-yellow-400 w-6 h-6" />
                     <span className="text-2xl font-bold text-indigo-700">{totalPoints}</span>

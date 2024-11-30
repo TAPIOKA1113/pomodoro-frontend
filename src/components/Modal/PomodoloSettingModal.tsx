@@ -108,15 +108,15 @@ export default function PomodoloSettingModal({ isOpen, onClose, onSave, allPomod
 
     const handleCopyButton = async (date: Date) => {
 
-        const previousDate = new Date(date);
-        previousDate.setDate(previousDate.getDate() - 1);
+        const yesterdayDate = new Date(date);
+        yesterdayDate.setDate(yesterdayDate.getDate() - 1);
 
-        const previousPomodolos = await fetchPomodolos(previousDate);
+        const yesterdayPomodolos = await fetchPomodolos(yesterdayDate);
 
-        // 前日のポモドーロをコピーする際に、新しいIDを生成
-        const copiedPomodolos = previousPomodolos?.map(pomodolo => ({
+        // 前日のポモドーロをコピーする際に新しいIDを生成
+        const copiedPomodolos = yesterdayPomodolos?.map(pomodolo => ({
             ...pomodolo,
-            id: crypto.randomUUID(),  // 新しいIDを生成
+            id: crypto.randomUUID(),
             date: selectedDate,
             created_at: Date.now()
         })) || [];
