@@ -18,8 +18,6 @@ function Todo({ children }: TodoProps) {
                     </div>
                 </div>
                 <div className={`bg-white shadow-md rounded-lg w-[500px] h-80 p-6 overflow-auto`}>
-
-                    {/* Add your todo list functionality here */}
                 </div>
             </div>
         </>

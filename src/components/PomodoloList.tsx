@@ -19,6 +19,9 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
     const [isTimerModalOpen, setIsTimerModalOpen] = useState(false);
     const [pomodolos, setPomodolos] = useState<Pomodolo[]>([]);
 
+    const [selectedPomodoloId, setSelectedPomodoloId] = useState<string>(''); // タイマーコンポーネントに渡されるタスクID
+
+
     useEffect(() => {
         const fetchData = async () => {
             const data = await fetchPomodolos(selectedDate);
@@ -57,7 +60,6 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
 
         updatePomodoloCount(id, 1);
 
-
         setPomodolos(prev => prev.map(pomodolo => {
             if (pomodolo.id === id) {
                 if (pomodolo.setNumber > pomodolo.currentSets) {
@@ -94,6 +96,13 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
     };
 
 
+    const handleTimerModalClose = () => {
+
+        setIsTimerModalOpen(false)
+
+    }
+
+
     return (
         <>
             <div className="flex flex-col">
@@ -114,28 +123,34 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                                 return aTime - bTime;
                             })
                             .map((pomodolo, index) => (
-                                <HStack key={index} justify="space-between">
-                                    <Text onClick={() => setIsTimerModalOpen(true)}>{pomodolo.title}</Text>
-                                    <HStack >
-                                        <IconButton
-                                            icon={<FiMinus />}
-                                            size="sm"
-                                            isDisabled={pomodolo.currentSets <= 0}
-                                            onClick={() => handleMinusPomodolo(pomodolo.id)}
-                                        />
+                                <div>
+                                    <HStack key={index} justify="space-between">
+                                        <Text onClick={() => {
+                                            setSelectedPomodoloId(pomodolo.id)
+                                            setIsTimerModalOpen(true)
+                                        }}>{pomodolo.title}</Text>
+                                        <HStack >
+                                            <IconButton
+                                                icon={<FiMinus />}
+                                                size="sm"
+                                                isDisabled={pomodolo.currentSets <= 0}
+                                                onClick={() => handleMinusPomodolo(pomodolo.id)}
+                                            />
 
-                                        <Text fontSize="sm" color={pomodolo.currentSets >= pomodolo.setNumber ? "green.500" : "gray.500"}>
-                                            {pomodolo.currentSets} / {pomodolo.setNumber} セット
-                                        </Text>
+                                            <Text fontSize="sm" color={pomodolo.currentSets >= pomodolo.setNumber ? "green.500" : "gray.500"}>
+                                                {pomodolo.currentSets} / {pomodolo.setNumber} セット
+                                            </Text>
 
-                                        <IconButton
-                                            icon={pomodolo.currentSets >= pomodolo.setNumber ? <FiStar /> : <FiPlus />}
-                                            color={pomodolo.currentSets >= pomodolo.setNumber ? "gold" : undefined}
-                                            size="sm"
-                                            onClick={() => handlePlusPomodolo(pomodolo.id)}
-                                        />
+                                            <IconButton
+                                                icon={pomodolo.currentSets >= pomodolo.setNumber ? <FiStar /> : <FiPlus />}
+                                                color={pomodolo.currentSets >= pomodolo.setNumber ? "gold" : undefined}
+                                                size="sm"
+                                                onClick={() => handlePlusPomodolo(pomodolo.id)}
+                                            />
+                                        </HStack>
                                     </HStack>
-                                </HStack>
+
+                                </div>
                             ))}
                         {pomodolos.length === 0 && (
                             <Text color="gray.500" textAlign="center">
@@ -166,13 +181,15 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                 allPomodolos={pomodolos}
                 selectedDate={selectedDate}
             />
-
             <CountdownTimerModal
                 isOpen={isTimerModalOpen}
-                onClose={() => setIsTimerModalOpen(false)}
-                onSave={handleSavePomodolo}
-                initialTime={60}
+                onClose={() => handleTimerModalClose()}
+                initTime={3}
+                pomodoloId={selectedPomodoloId}
+                finishPomodolo={handlePlusPomodolo}
             ></CountdownTimerModal>
+
+
         </>
     );
 }

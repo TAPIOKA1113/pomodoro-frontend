@@ -82,7 +82,7 @@ export const updatePomodoloCount = async (id: string, num: number) => {
     const { data: session } = await supabase.auth.getSession();
     if (!session.session?.user) return null;
 
-    // まず現在のcurrentSetsの値を取得
+    // まず現在までの完了セット数(currentSets)の値を取得
     const { data: currentData, error: fetchError } = await supabase
         .from('pomodolos')
         .select('currentSets')
