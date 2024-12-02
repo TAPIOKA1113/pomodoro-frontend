@@ -5,22 +5,35 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Flex
+    Flex,
+    Select,
+    Option,
 } from '@yamada-ui/react'
 
 interface CountdownTimerProps {
     isOpen: boolean;
     onClose: () => void;
-    initTime: number
     pomodoloId: string;
+    pomodoloName: string;
     finishPomodolo: any;
 }
 
-const CountdownTimerModal: React.FC<CountdownTimerProps> = ({ isOpen, onClose, initTime, pomodoloId, finishPomodolo }) => {
-    const [timeLeft, setTimeLeft] = useState(initTime)
+const CountdownTimerModal: React.FC<CountdownTimerProps> = ({ isOpen, onClose, pomodoloId, pomodoloName, finishPomodolo }) => {
+    const [timeLeft, setTimeLeft] = useState(1500)
     const [isActive, setIsActive] = useState(false)
     const [hasFinished, setHasFinished] = useState(false);
 
+    const [time, onChange] = useState<string>('1500')
+
+    const formatTime = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    };
+
+    useEffect(() => {
+        setTimeLeft(parseInt(time)); // timeが変更されたときにtimeLeftを更新
+    }, [time]);
 
     useEffect(() => {
         let interval: NodeJS.Timeout | null = null
@@ -45,14 +58,27 @@ const CountdownTimerModal: React.FC<CountdownTimerProps> = ({ isOpen, onClose, i
         setIsActive(!isActive)
     }
 
-    const progress = (timeLeft / initTime) * 100
+    const handleClose = () => {
+        setTimeLeft(1500);
+        setIsActive(false);
+        onClose();
+    };
+
+    const progress = (timeLeft / parseInt(time)) * 100
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size='3xl'>
+        <Modal isOpen={isOpen} onClose={handleClose} size='3xl'>
             <ModalOverlay />
-            <ModalHeader>タイマー </ModalHeader>
+            <ModalHeader>{pomodoloName} </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
+                <VStack>
+                    <Select placeholder='時間を選択' value={time.toString()} onChange={onChange}>
+                        <Option value='1500'>25分</Option>
+                        <Option value='1800'>30分</Option>
+                        <Option value='2100'>35分</Option>
+                    </Select>
+                </VStack>
                 <VStack >
                     <Flex justify='center'>
                         <Box position="relative" width="200px" height="200px">
@@ -64,7 +90,7 @@ const CountdownTimerModal: React.FC<CountdownTimerProps> = ({ isOpen, onClose, i
                             >
                                 <CircleProgressLabel>
                                     <Text fontSize="3xl" fontWeight="bold">
-                                        {timeLeft} s
+                                        {formatTime(timeLeft)}
                                     </Text>
                                 </CircleProgressLabel>                </CircleProgress>
                         </Box>

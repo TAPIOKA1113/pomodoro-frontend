@@ -19,7 +19,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
     const [isTimerModalOpen, setIsTimerModalOpen] = useState(false);
     const [pomodolos, setPomodolos] = useState<Pomodolo[]>([]);
 
-    const [selectedPomodoloId, setSelectedPomodoloId] = useState<string>(''); // タイマーコンポーネントに渡されるタスクID
+    const [selectedPomodolo, setSelectedPomodolo] = useState<Pomodolo>(); // タイマーコンポーネントに渡されるタスクID
 
 
     useEffect(() => {
@@ -126,7 +126,7 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
                                 <div>
                                     <HStack key={index} justify="space-between">
                                         <Text onClick={() => {
-                                            setSelectedPomodoloId(pomodolo.id)
+                                            setSelectedPomodolo(pomodolo)
                                             setIsTimerModalOpen(true)
                                         }}>{pomodolo.title}</Text>
                                         <HStack >
@@ -184,8 +184,8 @@ function PomodoloList({ children, onPointsUpdate, selectedDate }: PomodoloListPr
             <CountdownTimerModal
                 isOpen={isTimerModalOpen}
                 onClose={() => handleTimerModalClose()}
-                initTime={3}
-                pomodoloId={selectedPomodoloId}
+                pomodoloId={selectedPomodolo?.id || ''}
+                pomodoloName={selectedPomodolo?.title || ''}
                 finishPomodolo={handlePlusPomodolo}
             ></CountdownTimerModal>
 
